@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How it works · Pirents</title>
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gluten:wght@500;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/tokens.css"><link rel="stylesheet" href="assets/css/base.css"><link rel="stylesheet" href="assets/css/components.css">
+<style>
+  .page-hero { padding-block: var(--space-16) var(--space-12); max-width: 720px; }
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-10); align-items: center; }
+  @media (max-width: 899px) { .split { grid-template-columns: 1fr; } }
+  .faq details { border-bottom: 1px solid var(--color-border); }
+  .faq summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); padding: var(--space-5) 0; font-weight: 700; font-size: var(--text-lg); }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary .icon { transition: transform var(--dur-base) var(--ease-out); flex: none; }
+  .faq details[open] summary .icon { transform: rotate(180deg); }
+  .faq details p { padding-bottom: var(--space-5); color: var(--color-ink-2); max-width: 65ch; }
+  .fee-box { display: grid; gap: var(--space-3); }
+  .fee-box .kv { font-size: var(--text-base); }
+  .pill-list { display: grid; gap: var(--space-3); }
+  .pill-list li { display: flex; gap: 12px; align-items: flex-start; }
+  .pill-list .icon { color: var(--color-accent-700); flex: none; margin-top: 3px; }
+</style>
+</head>
+<body>
+<header id="site-header" class="site-header"></header>
+<main id="main">
+  <div class="container">
+    <div class="page-hero stack"><span class="eyebrow">How it works</span><h1>Rent from a local. List for a traveller.</h1><p class="lead">Pirents connects people who own mobility and transport gear with people who need it for a few days. Here's exactly what happens on both sides.</p></div>
+  </div>
+
+  <section class="section" style="padding-top:0" id="renters">
+    <div class="container stack-lg">
+      <div class="section-head"><div><span class="eyebrow">For renters</span><h2>From search to handover</h2></div></div>
+      <div class="grid grid-4">
+        <article class="card step-card"><div class="step-num">1</div><h3 style="font-size:var(--text-h4)">Search your destination</h3><p class="muted text-sm" style="margin-top:8px">Enter a city and dates. Filter by category, features like folding or delivery, and structured specs such as seat width or range.</p></article>
+        <article class="card step-card"><div class="step-num">2</div><h3 style="font-size:var(--text-h4)">Check the details</h3><p class="muted text-sm" style="margin-top:8px">Every listing shows weight, dimensions, limits, the owner's rules and real reviews. Message the owner if anything is unclear.</p></article>
+        <article class="card step-card"><div class="step-num">3</div><h3 style="font-size:var(--text-h4)">Book with a clear total</h3><p class="muted text-sm" style="margin-top:8px">The price, the 10% service fee and the refundable deposit are all shown before you commit. Owners confirm within 24 hours, or instantly.</p></article>
+        <article class="card step-card"><div class="step-num">4</div><h3 style="font-size:var(--text-h4)">Meet and go</h3><p class="muted text-sm" style="margin-top:8px">Get the item delivered, handed over at the airport or pick it up. A quick check together, then it's yours for the trip.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0" id="owners">
+    <div class="container split">
+      <div class="stack"><span class="eyebrow">For owners</span><h2>List once, earn every time it goes out</h2><p class="lead">You keep control: your price, your minimum rental, your handover options and your rules. We handle payment, deposits, ID checks and cover.</p>
+        <ul class="plain pill-list">
+          <li>${check}<span><b>Ten-minute listing.</b> Category, a few specs, price, photos. Done.</span></li>
+          <li>${check}<span><b>Verified renters only.</b> Everyone who books has confirmed their identity and payment method.</span></li>
+          <li>${check}<span><b>Deposit and damage cover.</b> You set a refundable deposit; every rental also carries up to €3,000 damage cover.</span></li>
+          <li>${check}<span><b>Fast payouts.</b> Earnings land in your account 48 hours after handover.</span></li>
+        </ul>
+        <div><a class="btn btn-primary btn-lg" href="list-item.html">List your item</a></div>
+      </div>
+      <div class="card card-pad fee-box"><h3 style="font-size:var(--text-h4)">Example: folding wheelchair, 7 days</h3>
+        <dl class="kv"><dt>€12 × 7 days</dt><dd>€84</dd><dt>Renter pays service fee (10%)</dt><dd>€8</dd><dt>Renter's total</dt><dd>€92</dd><dt>Refundable deposit held at pickup</dt><dd>€80</dd><dt class="total">You receive</dt><dd class="total" style="color:var(--color-accent-700)">€84</dd></dl>
+        <p class="text-sm muted">The service fee is paid by the renter. Owners pay nothing to list.</p></div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0" id="trust">
+    <div class="container stack-lg">
+      <div class="section-head"><div><span class="eyebrow">Trust &amp; safety</span><h2>What's behind every rental</h2></div></div>
+      <div class="grid grid-3">
+        <article class="card card-pad stack-sm">${shield}<h3 style="font-size:var(--text-h4)">Identity checks</h3><p class="muted text-sm">Owners and renters verify a government ID and phone number before their first rental.</p></article>
+        <article class="card card-pad stack-sm">${wallet}<h3 style="font-size:var(--text-h4)">Protected payments</h3><p class="muted text-sm">Money is held by Pirents until 24 hours after handover. No cash, no bank transfers to strangers.</p></article>
+        <article class="card card-pad stack-sm">${message}<h3 style="font-size:var(--text-h4)">Help during the trip</h3><p class="muted text-sm">Message the owner in-app, or reach our support team seven days a week if something goes wrong.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0" id="faq">
+    <div class="container" style="max-width:800px">
+      <h2 style="margin-bottom:var(--space-6)">Common questions</h2>
+      <div class="faq card card-pad" style="padding-block:0">
+        <details><summary>When am I charged?<span>${chevron}</span></summary><p>For "request to book" listings, only once the owner confirms. For instant-book listings, at the time of booking. Deposits are held from pickup and released within 3 days of return.</p></details>
+        <details><summary>What if the item is faulty or not as described?<span>${chevron}</span></summary><p>Tell us within 24 hours of pickup with a photo. We refund in full and help you find an alternative nearby.</p></details>
+        <details><summary>Can someone else drive the car or use the chair?<span>${chevron}</span></summary><p>Yes, as long as the named renter is present at handover. For cars, additional drivers must be added before pickup so they're covered by the insurance.</p></details>
+        <details><summary>Do you rent medical equipment?<span>${chevron}</span></summary><p>We list mobility aids that are safe for general use: wheelchairs, scooters, rollators, ramps, shower chairs and similar. We do not list prescription or clinical devices such as oxygen equipment or hospital beds.</p></details>
+        <details><summary>What does the owner see about me?<span>${chevron}</span></summary><p>Your first name, verified badge, reviews from previous owners and your message. Your full name and phone number are shared once a booking is confirmed.</p></details>
+        <details><summary>How do cancellations work?<span>${chevron}</span></summary><p>Free cancellation until 48 hours before pickup. After that, the first day's rental is kept. Owners who cancel a confirmed booking are penalised in search ranking.</p></details>
+      </div>
+    </div>
+  </section>
+</main>
+<footer id="site-footer" class="site-footer"></footer>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+  document.querySelector("main").innerHTML = document.querySelector("main").innerHTML.replace(/\$\{(\w+)\}/g, (_, n) => window.Pirents.icon(n === "chevron" ? "chevronDown" : n, n === "chevron" ? "" : "icon-lg"));
+</script>
+</body>
+</html>

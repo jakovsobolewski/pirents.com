@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Listing · Pirents</title>
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gluten:wght@500;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/tokens.css"><link rel="stylesheet" href="assets/css/base.css"><link rel="stylesheet" href="assets/css/components.css">
+<style>
+  .crumbs { display: flex; gap: 8px; align-items: center; font-size: var(--text-sm); color: var(--color-muted); padding: var(--space-5) 0; flex-wrap: wrap; }
+  .crumbs a { color: var(--color-ink-2); }
+  .gallery { display: grid; grid-template-columns: 2fr 1fr; grid-template-rows: 220px 220px; gap: 10px; border-radius: var(--radius-xl); overflow: hidden; }
+  .gallery .tile { display: grid; place-items: center; border: 1px solid var(--color-border); }
+  .gallery .tile:first-child { grid-row: span 2; }
+  .gallery .tile svg { width: 34%; height: 34%; stroke-width: 1.2; color: var(--color-ink); }
+  .gallery .tile:first-child svg { width: 28%; height: 28%; }
+  @media (max-width: 639px) { .gallery { grid-template-columns: 1fr; grid-template-rows: 240px; } .gallery .tile:not(:first-child) { display: none; } }
+  .detail { display: grid; grid-template-columns: 7fr 5fr; gap: var(--space-10); align-items: start; padding-block: var(--space-8) var(--space-16); }
+  @media (max-width: 899px) { .detail { grid-template-columns: 1fr; } }
+  .booking { position: sticky; top: calc(var(--header-h) + 24px); }
+  .owner-card { display: flex; gap: var(--space-4); align-items: center; }
+  .title-row { display: flex; justify-content: space-between; gap: var(--space-4); align-items: flex-start; }
+  .title-row .btn-icon { flex: none; }
+  .user-title { font-family: var(--font-sans); font-weight: 800; letter-spacing: 0; font-size: var(--text-h2); line-height: 1.15; }
+  .mobile-bar { display: none; position: fixed; left: 0; right: 0; bottom: 0; background: var(--color-surface); border-top: 1px solid var(--color-border); padding: 12px var(--gutter); z-index: 40; align-items: center; justify-content: space-between; gap: var(--space-4); }
+  @media (max-width: 899px) { .mobile-bar { display: flex; } main { padding-bottom: 80px; } }
+</style>
+</head>
+<body>
+<header id="site-header" class="site-header"></header>
+<main id="main" class="container">
+  <div id="page"></div>
+</main>
+<footer id="site-footer" class="site-footer"></footer>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+(function(){
+  const P = window.Pirents, q = P.qs();
+  const l = P.store.listing(q.id);
+  const page = document.getElementById("page");
+  if (!l) { page.innerHTML = `<div class="card empty" style="margin:var(--space-12) 0"><div class="mark">π</div><h2>We can't find that listing</h2><p class="muted">It may have been removed by the owner.</p><a class="btn btn-primary" href="browse.html">Browse all listings</a></div>`; return; }
+  const cat = P.category(l.category);
+  document.title = `${l.title} in ${l.city} · Pirents`;
+  const instant = (l.features || []).includes("instant");
+  const featIcons = { delivery: "truck", airport: "plane", electric: "zap", insurance: "shield", instant: "zap", foldable: "fold", lightweight: "weight", charger: "zap", helmet: "shield", ramp: "fold", allterrain: "sun", hand_controls: "car", child_seat: "stroller" };
+  const specIcons = ["weight", "ruler", "tag", "fold"];
+  page.innerHTML = `
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a>${P.icon("arrowRight", "icon-sm")}<a href="browse.html?category=${cat.id}">${cat.name}</a>${P.icon("arrowRight", "icon-sm")}<a href="browse.html?where=${encodeURIComponent(l.city)}">${P.esc(l.city)}</a></nav>
+    <div class="gallery" aria-label="Photos"><div class="tile" style="background:${cat.tile}">${P.icon(cat.icon)}</div><div class="tile" style="background:var(--color-gold-50)">${P.icon(cat.icon)}</div><div class="tile" style="background:var(--color-accent-50)">${P.icon(cat.icon)}</div></div>
+    <div class="detail">
+      <div class="stack-lg">
+        <div class="stack">
+          <div class="title-row"><div><span class="badge badge-accent">${cat.short}</span><h1 class="user-title" style="margin-top:10px">${P.esc(l.title)}</h1></div><button class="btn btn-outline btn-icon" type="button" data-fav="${l.id}" aria-pressed="${P.store.isFavourite(l.id)}" aria-label="Save to favourites">${P.icon("heart")}</button></div>
+          <div class="row wrap text-sm ink-2">${P.icon("pin", "icon-sm")}<span>${P.esc(l.area ? l.area + ", " : "")}${P.esc(l.city)}, ${P.esc(l.country)}</span><span class="muted">·</span>${l.reviews ? `<span class="rating">${P.icon("star")}${l.rating.toFixed(1)}</span><a href="#reviews">${l.reviews} reviews</a>` : `<span class="badge badge-accent">New listing</span>`}${instant ? `<span class="muted">·</span><span class="row" style="gap:4px">${P.icon("zap", "icon-sm")} Instant book</span>` : ""}</div>
+        </div>
+        <hr class="divider">
+        <div class="owner-card"><span class="avatar lg" aria-hidden="true">${P.initials(l.owner.name)}</span><div><b>Owned by ${P.esc(l.owner.name)}</b><div class="text-sm muted">On Pirents since ${l.owner.since} · Replies ${l.owner.response}</div></div>${l.owner.verified ? `<span class="badge badge-success" style="margin-left:auto">${P.icon("shield", "icon-sm")} Verified</span>` : ""}</div>
+        <hr class="divider">
+        <div class="stack"><h2 style="font-size:var(--text-h3)">About this ${cat.short.toLowerCase().replace(/s$/, "")}</h2><p class="measure ink-2" style="line-height:1.6">${P.esc(l.description)}</p></div>
+        <div class="stack"><h2 style="font-size:var(--text-h3)">Details</h2><div class="spec-grid">${Object.entries(l.specs || {}).map(([k, v], i) => `<div class="spec">${P.icon(specIcons[i % 4])}<div><b>${P.esc(v)}</b><span>${P.esc(k)}</span></div></div>`).join("")}</div></div>
+        <div class="stack"><h2 style="font-size:var(--text-h3)">What's included</h2><ul class="plain grid grid-2" style="gap:10px">${(l.features || []).map(f => `<li class="row" style="gap:10px">${P.icon(featIcons[f] || "check")}<span>${P.featureName(f)}</span></li>`).join("") || "<li class='muted'>No extras listed</li>"}</ul></div>
+        ${l.rules?.length ? `<div class="stack"><h2 style="font-size:var(--text-h3)">Owner's rules</h2><ul class="plain stack-sm">${l.rules.map(r => `<li class="row" style="gap:10px;align-items:flex-start">${P.icon("check", "icon-sm")} <span>${P.esc(r)}</span></li>`).join("")}</ul></div>` : ""}
+        <div class="stack" id="reviews"><h2 style="font-size:var(--text-h3)">${l.reviews ? `${l.reviews} reviews · ${l.rating.toFixed(1)} average` : "No reviews yet"}</h2>${l.reviews ? `<div class="grid grid-2">${window.PIRENTS_REVIEWS.map(r => `<article class="review card card-pad"><header><span class="avatar" aria-hidden="true">${P.initials(r.name)}</span><div><b>${P.esc(r.name)}</b><span>${r.date}</span></div></header><div class="rating" aria-label="5 out of 5">${P.icon("star").repeat(5)}</div><p class="ink-2">${P.esc(r.text)}</p></article>`).join("")}</div>` : `<p class="muted">Be the first to rent this and leave a review.</p>`}</div>
+        <div class="notice notice-info">${P.icon("shield")}<span><b>Damage cover included.</b> Every Pirents rental includes up to €3,000 damage cover. The refundable deposit is only held from pickup to return.</span></div>
+      </div>
+      <aside class="booking card card-pad stack" aria-label="Book this item">
+        <div class="row between"><span class="price" style="font-size:var(--text-h3)">${P.money(l.price)} <span class="unit" style="font-size:var(--text-base)">/ day</span></span>${l.reviews ? `<span class="rating">${P.icon("star")}${l.rating.toFixed(1)}</span>` : ""}</div>
+        <form id="book" class="stack" novalidate>
+          <div class="form-grid" style="gap:12px">
+            <div class="field"><label for="b-from">Pick up</label><input class="input" id="b-from" type="date" required></div>
+            <div class="field"><label for="b-to">Return</label><input class="input" id="b-to" type="date" required></div>
+          </div>
+          <div class="field"><span class="label" id="qty-label">Quantity</span><div class="stepper-input" role="group" aria-labelledby="qty-label"><button type="button" id="qty-minus" aria-label="Decrease quantity">${P.icon("minus")}</button><output id="qty" for="qty-minus qty-plus">1</output><button type="button" id="qty-plus" aria-label="Increase quantity">${P.icon("plus")}</button></div></div>
+          <div class="field error" id="date-error" hidden><span class="error-msg">${P.icon("alert", "icon-sm")} <span id="date-error-text"></span></span></div>
+          <dl class="kv" id="quote" hidden></dl>
+          <button class="btn btn-primary btn-lg btn-block" type="submit" id="book-btn">${instant ? "Book now" : "Request to book"}</button>
+          <p class="muted text-sm" style="text-align:center">${instant ? "Confirmed immediately. Free cancellation up to 48 h before pickup." : "You won't be charged yet. The owner has 24 h to confirm."}</p>
+        </form>
+        <hr class="divider">
+        <button class="btn btn-outline btn-block" type="button" id="msg-owner">${P.icon("message")} Message ${P.esc(l.owner.name.split(" ")[0])}</button>
+        <div class="text-sm muted">Minimum rental: ${l.minDays || 1} day${(l.minDays || 1) > 1 ? "s" : ""} · Deposit ${P.money(l.deposit)}, refundable</div>
+      </aside>
+    </div>
+    <div class="mobile-bar"><span class="price" style="font-size:var(--text-h4)">${P.money(l.price)} <span class="unit" style="font-size:var(--text-sm)">/ day</span></span><a class="btn btn-primary" href="#book">${instant ? "Book now" : "Request to book"}</a></div>`;
+
+  const $ = (s) => document.querySelector(s);
+  const from = $("#b-from"), to = $("#b-to"), qtyOut = $("#qty"), quote = $("#quote"), err = $("#date-error");
+  let qty = 1;
+  from.min = P.today(); to.min = P.today(1);
+  from.value = q.from || ""; to.value = q.to || "";
+  const validate = () => {
+    const d = P.days(from.value, to.value);
+    let msg = "";
+    if (from.value && to.value && d <= 0) msg = "Return date must be after pickup";
+    else if (d && d < (l.minDays || 1)) msg = `This owner rents for at least ${l.minDays} days`;
+    err.hidden = !msg; $("#date-error-text").textContent = msg;
+    if (d > 0 && !msg) {
+      const qt = P.quote(l, from.value, to.value, qty);
+      quote.hidden = false;
+      quote.innerHTML = `<dt>${P.money(l.price)} × ${qt.days} day${qt.days > 1 ? "s" : ""}${qty > 1 ? ` × ${qty}` : ""}</dt><dd>${P.money(qt.subtotal)}</dd><dt>Service fee</dt><dd>${P.money(qt.fee)}</dd><dt>Refundable deposit <span class="text-xs">(held at pickup)</span></dt><dd>${P.money(qt.deposit * qty)}</dd><dt class="total">Total</dt><dd class="total">${P.money(qt.total)}</dd>`;
+    } else quote.hidden = true;
+    return d > 0 && !msg;
+  };
+  from.addEventListener("change", () => { to.min = from.value || P.today(1); validate(); }); to.addEventListener("change", validate);
+  $("#qty-minus").addEventListener("click", () => { qty = Math.max(1, qty - 1); qtyOut.value = qty; $("#qty-minus").disabled = qty === 1; validate(); });
+  $("#qty-plus").addEventListener("click", () => { qty = Math.min(4, qty + 1); qtyOut.value = qty; $("#qty-minus").disabled = false; validate(); });
+  $("#qty-minus").disabled = true;
+  validate();
+  $("#book").addEventListener("submit", (e) => {
+    e.preventDefault();
+    if (!from.value || !to.value) { err.hidden = false; $("#date-error-text").textContent = "Choose pickup and return dates"; from.focus(); return; }
+    if (!validate()) return;
+    P.requireAuth(() => {
+      const qt = P.quote(l, from.value, to.value, qty);
+      const b = P.store.addBooking({ listingId: l.id, title: l.title, city: l.city, owner: l.owner.name, from: from.value, to: to.value, qty, ...qt, instant, renter: P.store.user.name });
+      location.href = `dashboard.html?booked=${b.id}`;
+    });
+  });
+  $("#msg-owner").addEventListener("click", () => P.requireAuth(() => P.toast(`Message thread with ${l.owner.name.split(" ")[0]} opened`, "message")));
+})();
+</script>
+</body>
+</html>

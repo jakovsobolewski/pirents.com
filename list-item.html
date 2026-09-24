@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>List your item · Pirents</title>
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gluten:wght@500;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/tokens.css"><link rel="stylesheet" href="assets/css/base.css"><link rel="stylesheet" href="assets/css/components.css">
+<style>
+  .wizard { max-width: 760px; margin: 0 auto; padding-block: var(--space-10) var(--space-16); display: grid; gap: var(--space-8); }
+  .step { display: none; }
+  .step[data-active="true"] { display: grid; gap: var(--space-6); }
+  .cat-pick { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  @media (max-width: 639px) { .cat-pick { grid-template-columns: repeat(2, 1fr); } }
+  .cat-pick label { display: grid; gap: 8px; justify-items: center; text-align: center; padding: 14px 8px; border: 1.5px solid var(--color-border); border-radius: var(--radius-md); cursor: pointer; font-size: var(--text-sm); font-weight: 600; min-height: 96px; background: var(--color-surface); }
+  .cat-pick label:has(input:checked) { border-color: var(--color-ink); background: var(--color-accent-50); }
+  .cat-pick label:has(input:focus-visible) { box-shadow: var(--focus-ring); }
+  .cat-pick input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .cat-pick .ico { width: 40px; height: 40px; border-radius: var(--radius-sm); display: grid; place-items: center; }
+  .cat-pick .ico svg { width: 22px; height: 22px; }
+  .feat-pick { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  @media (max-width: 639px) { .feat-pick { grid-template-columns: 1fr; } }
+  .photo-drop { border: 2px dashed var(--color-border-strong); border-radius: var(--radius-lg); padding: var(--space-8); text-align: center; display: grid; justify-items: center; gap: 8px; color: var(--color-ink-2); background: var(--color-surface-2); }
+  .photo-drop .icon { width: 32px; height: 32px; color: var(--color-muted); }
+  .wizard-nav { display: flex; justify-content: space-between; gap: var(--space-4); padding-top: var(--space-4); border-top: 1px solid var(--color-border); }
+  .earn { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); padding: var(--space-4) var(--space-5); background: var(--color-accent-50); border: 1px solid var(--color-accent-200); border-radius: var(--radius-md); }
+  .earn b { font-size: var(--text-h3); font-weight: 800; }
+  .preview { display: grid; grid-template-columns: 300px 1fr; gap: var(--space-6); align-items: start; }
+  @media (max-width: 639px) { .preview { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header id="site-header" class="site-header"></header>
+<main id="main">
+  <div class="container wizard">
+    <div class="stack-sm"><span class="eyebrow">List your item</span><h1>Turn idle gear into income</h1><p class="lead">It takes about ten minutes. You choose the price, the rules and when it's available.</p></div>
+    <ol class="stepper" id="stepper"><li aria-current="step"><span>Category</span></li><li><span>Details</span></li><li><span>Pricing</span></li><li><span>Photos &amp; rules</span></li><li><span>Review</span></li></ol>
+    <form id="wizard" class="card card-pad" novalidate>
+
+      <section class="step" data-step="0" data-active="true">
+        <div class="stack-sm"><h2 style="font-size:var(--text-h3)">What are you listing?</h2><p class="muted">Pick the closest category. It decides which details we ask for.</p></div>
+        <div class="cat-pick" id="cat-pick" role="radiogroup" aria-label="Category"></div>
+        <div class="field error" id="err-cat" hidden><span class="error-msg">Choose a category to continue</span></div>
+      </section>
+
+      <section class="step" data-step="1">
+        <div class="stack-sm"><h2 style="font-size:var(--text-h3)">Tell renters about it</h2><p class="muted">Be specific. Weight, size and range are the things people filter by.</p></div>
+        <div class="form-grid">
+          <div class="field span-2"><label for="f-title">Title</label><input class="input" id="f-title" name="title" maxlength="80" placeholder="e.g. Lightweight folding wheelchair, 9 kg" required><span class="help">Brand, type and the one number that matters most.</span><span class="error-msg">Add a title of at least 8 characters</span></div>
+          <div class="field"><label for="f-city">City</label><input class="input" id="f-city" name="city" list="cities" placeholder="e.g. Lisbon" required><datalist id="cities"></datalist><span class="error-msg">Enter the city</span></div>
+          <div class="field"><label for="f-area">Neighbourhood</label><input class="input" id="f-area" name="area" placeholder="e.g. Alfama"><span class="help">Shown to renters. Your exact address is shared after booking.</span></div>
+          <div class="field span-2"><label for="f-desc">Description</label><textarea class="textarea" id="f-desc" name="description" placeholder="What is it good for? Where can you hand it over? Anything a first-time user should know?" required></textarea><span class="error-msg">Write at least a couple of sentences (40 characters)</span></div>
+          <div id="spec-fields" class="span-2 form-grid" style="gap:var(--space-4)"></div>
+        </div>
+        <div class="stack-sm"><span class="label">Features and extras</span><div class="feat-pick" id="feat-pick"></div></div>
+      </section>
+
+      <section class="step" data-step="2">
+        <div class="stack-sm"><h2 style="font-size:var(--text-h3)">Set your price</h2><p class="muted">Similar items in your category rent for <b id="price-hint"></b> a day. You can change this any time.</p></div>
+        <div class="form-grid">
+          <div class="field"><label for="f-price">Price per day</label><div class="input-affix"><span>€</span><input class="input" id="f-price" name="price" type="number" min="1" step="1" inputmode="numeric" placeholder="12" required></div><span class="error-msg">Enter a price of at least €1</span></div>
+          <div class="field"><label for="f-deposit">Refundable deposit</label><div class="input-affix"><span>€</span><input class="input" id="f-deposit" name="deposit" type="number" min="0" step="5" inputmode="numeric" placeholder="80"></div><span class="help">Held from pickup to return. Most owners choose 5 to 10 times the daily price.</span></div>
+          <div class="field"><label for="f-min">Minimum rental</label><select class="select" id="f-min" name="minDays"><option value="1">1 day</option><option value="2">2 days</option><option value="3">3 days</option><option value="7">1 week</option></select></div>
+          <div class="field"><label for="f-instant">Booking</label><select class="select" id="f-instant" name="instant"><option value="request">Approve each request (24 h)</option><option value="instant">Instant book</option></select></div>
+        </div>
+        <div class="earn"><div><div class="text-sm ink-2">You'd earn per week at 60% occupancy</div><b id="earn">€0</b></div><div class="text-sm muted" style="text-align:right;max-width:24ch">After the 10% Pirents fee. Paid out 48 h after each handover.</div></div>
+      </section>
+
+      <section class="step" data-step="3">
+        <div class="stack-sm"><h2 style="font-size:var(--text-h3)">Photos and rules</h2><p class="muted">Listings with three or more daylight photos get booked twice as often.</p></div>
+        <div class="photo-drop" id="photo-drop"><span class="icon-wrap"></span><b>Add photos</b><span class="text-sm">Drag and drop, or <label for="f-photos" style="color:var(--color-accent-700);font-weight:700;cursor:pointer;text-decoration:underline">browse your files</label></span><input id="f-photos" type="file" accept="image/*" multiple class="sr-only"><span class="text-xs muted" id="photo-count">No photos yet. Photos are not uploaded in this prototype.</span></div>
+        <div class="form-grid">
+          <div class="field span-2"><label for="f-rules">House rules <span class="muted" style="font-weight:500">(one per line)</span></label><textarea class="textarea" id="f-rules" name="rules" placeholder="Return clean and dry&#10;Report any damage the same day"></textarea></div>
+          <div class="field span-2"><label for="f-handover">Handover options</label><div class="feat-pick" id="handover-pick"></div></div>
+        </div>
+      </section>
+
+      <section class="step" data-step="4">
+        <div class="stack-sm"><h2 style="font-size:var(--text-h3)">Check and publish</h2><p class="muted">This is how your listing will look. You can edit everything later from your dashboard.</p></div>
+        <div class="preview"><div id="preview-card"></div><dl class="kv" id="preview-kv" style="align-content:start"></dl></div>
+        <label class="check card-check"><input type="checkbox" id="f-agree"> I confirm this item is safe, clean and mine to rent out, and I accept the owner terms.</label>
+        <div class="field error" id="err-agree" hidden><span class="error-msg">Please confirm before publishing</span></div>
+      </section>
+
+      <div class="wizard-nav" style="margin-top:var(--space-6)">
+        <button class="btn btn-ghost" type="button" id="back">Back</button>
+        <button class="btn btn-primary btn-lg" type="button" id="next">Continue</button>
+      </div>
+    </form>
+  </div>
+</main>
+<footer id="site-footer" class="site-footer"></footer>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+(function(){
+  const P = window.Pirents, $ = (s) => document.querySelector(s);
+  const specsByCat = {
+    wheelchair: ["Weight", "Seat width", "Max user weight", "Folded size"], scooter: ["Range", "Max speed", "Max user weight", "Weight"], bike: ["Frame size", "Gears", "Battery / range", "Lock"],
+    car: ["Seats", "Transmission", "Fuel", "Adaptations"], stroller: ["Age range", "Weight", "Fold", "Recline"], walker: ["Weight", "Seat height", "Max user weight", "Fold"],
+    beach: ["Wheels", "Max user weight", "Weight", "Floats"], other: ["Dimensions", "Weight", "Max load", "Notes"]
+  };
+  const handover = { delivery: "Delivery to your accommodation", airport: "Airport handover", pickup: "Pick up from my address", station: "Meet at a station" };
+  const handoverShort = { delivery: "Delivery", airport: "Airport", pickup: "Pick-up", station: "Station" };
+  document.getElementById("cities").innerHTML = window.PIRENTS_CITIES.map(c => `<option value="${c}">`).join("");
+  $("#cat-pick").innerHTML = window.PIRENTS_CATEGORIES.map(c => `<label><input type="radio" name="category" value="${c.id}"><span class="ico" style="background:${c.tile}">${P.icon(c.icon)}</span><span>${c.name}</span></label>`).join("");
+  $("#feat-pick").innerHTML = Object.entries(window.PIRENTS_FEATURES).filter(([k]) => !["delivery", "airport", "instant"].includes(k)).map(([k, v]) => `<label class="check card-check"><input type="checkbox" name="features" value="${k}">${v}</label>`).join("");
+  $("#handover-pick").innerHTML = Object.entries(handover).map(([k, v]) => `<label class="check card-check"><input type="checkbox" name="handover" value="${k}" ${k === "pickup" ? "checked" : ""}>${v}</label>`).join("");
+  $(".icon-wrap").outerHTML = P.icon("camera");
+  $("#f-photos").addEventListener("change", (e) => { const n = e.target.files.length; $("#photo-count").textContent = n ? `${n} photo${n > 1 ? "s" : ""} selected. Photos are not uploaded in this prototype.` : "No photos yet."; });
+
+  let step = 0; const steps = [...document.querySelectorAll(".step")], stepper = [...document.querySelectorAll("#stepper li")];
+  const form = $("#wizard");
+  const val = (n) => form.elements[n]?.value?.trim() || "";
+  const checked = (n) => [...form.querySelectorAll(`input[name="${n}"]:checked`)].map(i => i.value);
+  const setErr = (sel, on) => { const f = $(sel).closest(".field"); f.classList.toggle("error", on); if (f.hasAttribute("hidden") || f.id.startsWith("err-")) f.hidden = !on; };
+  const validators = [
+    () => { const ok = !!val("category"); $("#err-cat").hidden = ok; return ok; },
+    () => { let ok = true; const t = val("title").length >= 8, c = !!val("city"), d = val("description").length >= 40; setErr("#f-title", !t); setErr("#f-city", !c); setErr("#f-desc", !d); ok = t && c && d; return ok; },
+    () => { const ok = +val("price") >= 1; setErr("#f-price", !ok); return ok; },
+    () => true,
+    () => { const ok = $("#f-agree").checked; $("#err-agree").hidden = ok; return ok; }
+  ];
+  const render = () => {
+    steps.forEach((s, i) => s.dataset.active = i === step);
+    stepper.forEach((li, i) => { li.classList.toggle("done", i < step); if (i === step) li.setAttribute("aria-current", "step"); else li.removeAttribute("aria-current"); });
+    $("#back").style.visibility = step ? "visible" : "hidden";
+    $("#next").textContent = step === 4 ? "Publish listing" : "Continue";
+    if (step === 1) { const cat = val("category") || "other"; $("#spec-fields").innerHTML = specsByCat[cat].map((s, i) => `<div class="field"><label for="spec-${i}">${s}</label><input class="input" id="spec-${i}" name="spec-${i}" data-spec="${s}" placeholder="e.g. ${["9 kg", "44 cm", "120 kg", "76 × 30 × 70 cm"][i]}"></div>`).join(""); }
+    if (step === 2) { const cat = val("category"); const peers = window.PIRENTS_LISTINGS.filter(l => l.category === cat).map(l => l.price); const lo = Math.min(...peers), hi = Math.max(...peers); $("#price-hint").textContent = peers.length ? `${P.money(lo)} to ${P.money(hi)}` : "€8 to €40"; if (!val("price") && peers.length) $("#f-price").placeholder = Math.round(peers.reduce((a, b) => a + b) / peers.length); earn(); }
+    if (step === 4) preview();
+    window.scrollTo({ top: 0, behavior: "smooth" }); steps[step].querySelector("h2").setAttribute("tabindex", "-1"); steps[step].querySelector("h2").focus({ preventScroll: true });
+  };
+  const earn = () => { const p = +val("price") || 0; $("#earn").textContent = P.money(p * 7 * 0.6 * 0.9); };
+  $("#f-price").addEventListener("input", earn);
+  const build = () => {
+    const specs = {}; form.querySelectorAll("[data-spec]").forEach(i => { if (i.value.trim()) specs[i.dataset.spec] = i.value.trim(); });
+    const feats = checked("features"); checked("handover").forEach(h => { if (h === "delivery" || h === "airport") feats.push(h); }); if (val("instant") === "instant") feats.push("instant");
+    return { title: val("title"), category: val("category"), city: val("city"), area: val("area"), country: "", price: +val("price"), deposit: +val("deposit") || 0, minDays: +val("minDays"), description: val("description"), specs, features: feats, rules: val("rules").split("\n").map(s => s.trim()).filter(Boolean), owner: { name: P.store.user?.name || "You", since: new Date().getFullYear(), verified: false, response: "within a day" } };
+  };
+  const preview = () => { const l = Object.assign({ id: "preview", rating: 0, reviews: 0 }, build()); $("#preview-card").innerHTML = P.listingCard(l).replace('class="stretch"', 'class="stretch" tabindex="-1" aria-hidden="true"'); $("#preview-kv").innerHTML = `<dt>Category</dt><dd>${P.category(l.category).name}</dd><dt>Location</dt><dd>${P.esc(l.area ? l.area + ", " : "")}${P.esc(l.city)}</dd><dt>Price</dt><dd>${P.money(l.price)} / day</dd><dt>Deposit</dt><dd>${P.money(l.deposit)}</dd><dt>Minimum</dt><dd>${l.minDays} day${l.minDays > 1 ? "s" : ""}</dd><dt>Booking</dt><dd>${l.features.includes("instant") ? "Instant" : "On request"}</dd><dt>Handover</dt><dd>${checked("handover").map(h => handoverShort[h]).join(", ") || "—"}</dd><dt>Extras</dt><dd>${l.features.filter(f => !["instant", "delivery", "airport"].includes(f)).length}</dd>`; };
+  $("#next").addEventListener("click", () => {
+    if (!validators[step]()) { const bad = steps[step].querySelector(".field.error input, .field.error textarea, .field.error select"); bad?.focus(); return; }
+    if (step < 4) { step++; render(); return; }
+    P.requireAuth(() => { const l = P.store.addListing(build()); location.href = `dashboard.html?tab=listings&published=${l.id}`; });
+  });
+  $("#back").addEventListener("click", () => { if (step) { step--; render(); } });
+  form.addEventListener("submit", (e) => e.preventDefault());
+  form.addEventListener("input", (e) => { const f = e.target.closest(".field.error"); if (f) f.classList.remove("error"); });
+  $("#cat-pick").addEventListener("change", () => $("#err-cat").hidden = true);
+  render();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard · Pirents</title>
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gluten:wght@500;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/tokens.css"><link rel="stylesheet" href="assets/css/base.css"><link rel="stylesheet" href="assets/css/components.css">
+<style>
+  .dash { padding-block: var(--space-10) var(--space-16); display: grid; gap: var(--space-8); }
+  .dash > *, .tabpanel { min-width: 0; }
+  .dash-head { display: flex; align-items: center; gap: var(--space-4); flex-wrap: wrap; }
+  .dash-head .row { flex-wrap: wrap; }
+  @media (max-width: 639px) { .dash-head .row { margin-left: 0 !important; width: 100%; } .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-4); }
+  @media (max-width: 899px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .booking-row { display: grid; grid-template-columns: 64px 1fr auto; gap: var(--space-4); align-items: center; padding: var(--space-4) 0; border-bottom: 1px solid var(--color-border); }
+  .booking-row:last-child { border-bottom: 0; }
+  .booking-row .thumb { width: 64px; height: 64px; border-radius: var(--radius-md); display: grid; place-items: center; }
+  .booking-row .thumb svg { width: 28px; height: 28px; stroke-width: 1.4; }
+  .booking-row .actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+  @media (max-width: 639px) { .booking-row { grid-template-columns: 56px 1fr; } .booking-row .actions { grid-column: 1 / -1; justify-content: flex-start; } }
+  .tabpanel[hidden] { display: none; }
+</style>
+</head>
+<body>
+<header id="site-header" class="site-header"></header>
+<main id="main"><div class="container dash" id="dash"></div></main>
+<footer id="site-footer" class="site-footer"></footer>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+(function(){
+  const P = window.Pirents, q = P.qs(), root = document.getElementById("dash");
+  const reqBadge = (s) => ({ searching: '<span class="badge badge-warning">Searching</span>', found: '<span class="badge badge-success">Found</span>' }[s] || s);
+  const statusBadge = (s) => ({ pending: '<span class="badge badge-warning">Pending owner</span>', confirmed: '<span class="badge badge-success">Confirmed</span>', cancelled: '<span class="badge">Cancelled</span>', completed: '<span class="badge badge-info">Completed</span>' }[s] || s);
+  const render = () => {
+    const u = P.store.user;
+    if (!u) { root.innerHTML = `<div class="card empty" style="margin-top:var(--space-8)"><div class="mark">π</div><h1 style="font-size:var(--text-h2)">Sign in to see your dashboard</h1><p class="muted measure">Your bookings, listings and favourites live here.</p><button class="btn btn-primary btn-lg" type="button" data-auth>Sign in</button></div>`; return; }
+    const requests = P.store.requests(), bookings = P.store.bookings(), mine = P.store.listings().filter(l => l.mine), favs = P.store.listings().filter(l => P.store.isFavourite(l.id));
+    const spent = bookings.filter(b => b.status !== "cancelled").reduce((a, b) => a + b.total, 0);
+    const tab = q.tab || "bookings";
+    root.innerHTML = `
+      <div class="dash-head"><span class="avatar lg" aria-hidden="true">${P.initials(u.name)}</span><div><h1>Hi, ${P.esc(u.name.split(" ")[0])}</h1><p class="muted">${P.esc(u.email)} · Member since ${u.since}</p></div><div class="row" style="margin-left:auto"><a class="btn btn-outline" href="list-item.html">${P.icon("plus")} List an item</a><button class="btn btn-ghost" type="button" data-signout>Sign out</button></div></div>
+      ${q.booked ? `<div class="notice notice-success">${P.icon("check")}<span><b>${bookings.find(b => b.id === q.booked)?.status === "confirmed" ? "Booking confirmed." : "Request sent."}</b> ${bookings.find(b => b.id === q.booked)?.status === "confirmed" ? "The owner will message you with handover details." : "The owner has 24 hours to confirm. You won't be charged until they do."}</span></div>` : ""}
+      ${q.published ? `<div class="notice notice-success">${P.icon("check")}<span><b>Your listing is live.</b> It now appears in search results for ${P.esc(mine.find(l => l.id === q.published)?.city || "your city")}. <a href="listing.html?id=${q.published}">View it</a></span></div>` : ""}
+      <div class="stats"><div class="card card-pad stat"><b>${bookings.filter(b => b.status !== "cancelled").length}</b><span>Trips booked</span></div><div class="card card-pad stat"><b>${P.money(spent)}</b><span>Total spent</span></div><div class="card card-pad stat"><b>${mine.length}</b><span>Active listings</span></div><div class="card card-pad stat"><b>${favs.length + requests.length}</b><span>Saved &amp; requested</span></div></div>
+      <div class="tabs" role="tablist"><button role="tab" id="tab-bookings" aria-selected="${tab === "bookings"}" aria-controls="panel-bookings" data-tab="bookings">My bookings</button><button role="tab" id="tab-listings" aria-selected="${tab === "listings"}" aria-controls="panel-listings" data-tab="listings">My listings</button><button role="tab" id="tab-favs" aria-selected="${tab === "favs"}" aria-controls="panel-favs" data-tab="favs">Saved</button><button role="tab" id="tab-requests" aria-selected="${tab === "requests"}" aria-controls="panel-requests" data-tab="requests">Requests${requests.length ? ` <span class="badge badge-accent" style="margin-left:4px">${requests.length}</span>` : ""}</button></div>
+      <section class="tabpanel card card-pad" role="tabpanel" id="panel-bookings" aria-labelledby="tab-bookings" ${tab !== "bookings" ? "hidden" : ""}>
+        ${bookings.length ? bookings.map(b => { const l = P.store.listing(b.listingId), cat = P.category(l?.category); return `<div class="booking-row"><div class="thumb" style="background:${cat.tile}">${P.icon(cat.icon)}</div><div><div class="row wrap" style="gap:8px"><b>${P.esc(b.title)}</b>${statusBadge(b.status)}</div><div class="text-sm muted">${P.esc(b.city)} · ${P.fmtDate(b.from)} to ${P.fmtDate(b.to)} · ${b.days} day${b.days > 1 ? "s" : ""}${b.qty > 1 ? ` · ×${b.qty}` : ""} · <span class="price">${P.money(b.total)}</span></div></div><div class="actions"><a class="btn btn-outline btn-sm" href="listing.html?id=${b.listingId}">View item</a>${b.status === "pending" ? `<button class="btn btn-ghost btn-sm" type="button" data-simulate="${b.id}">Simulate owner confirm</button>` : ""}${["pending", "confirmed"].includes(b.status) ? `<button class="btn btn-danger btn-sm" type="button" data-cancel="${b.id}">Cancel</button>` : ""}</div></div>`; }).join("")
+          : `<div class="empty"><div class="mark">π</div><h3>No bookings yet</h3><p class="muted">Find something for your next trip.</p><a class="btn btn-primary" href="browse.html">Browse listings</a></div>`}
+      </section>
+      <section class="tabpanel card card-pad" role="tabpanel" id="panel-listings" aria-labelledby="tab-listings" ${tab !== "listings" ? "hidden" : ""}>
+        ${mine.length ? `<div class="table-wrap"><table class="table"><thead><tr><th>Item</th><th>City</th><th>Price</th><th>Status</th><th><span class="sr-only">Actions</span></th></tr></thead><tbody>${mine.map(l => `<tr><td><b>${P.esc(l.title)}</b><br><span class="muted">${P.category(l.category).name}</span></td><td>${P.esc(l.city)}</td><td class="price">${P.money(l.price)} / day</td><td><span class="badge badge-success">Live</span></td><td style="text-align:right"><a class="btn btn-outline btn-sm" href="listing.html?id=${l.id}">View</a> <button class="btn btn-danger btn-sm" type="button" data-remove="${l.id}">Remove</button></td></tr>`).join("")}</tbody></table></div>`
+          : `<div class="empty"><div class="mark">π</div><h3>You haven't listed anything yet</h3><p class="muted measure">Most owners earn back the cost of their equipment within a season.</p><a class="btn btn-primary" href="list-item.html">List your first item</a></div>`}
+      </section>
+      <section class="tabpanel" role="tabpanel" id="panel-favs" aria-labelledby="tab-favs" ${tab !== "favs" ? "hidden" : ""}>
+        ${favs.length ? `<div class="grid grid-3">${favs.map(P.listingCard).join("")}</div>` : `<div class="card empty"><div class="mark">π</div><h3>Nothing saved yet</h3><p class="muted">Tap the heart on any listing to keep it here.</p><a class="btn btn-primary" href="browse.html">Browse listings</a></div>`}
+      </section>
+      <section class="tabpanel card card-pad" role="tabpanel" id="panel-requests" aria-labelledby="tab-requests" ${tab !== "requests" ? "hidden" : ""}>
+        ${requests.length ? `<p class="muted text-sm" style="margin-bottom:var(--space-4)">Places where nothing was listed yet. π is looking for owners there and we'll email you when something turns up.</p><div class="table-wrap"><table class="table"><thead><tr><th>Need</th><th>Where</th><th>When</th><th>Status</th><th><span class="sr-only">Actions</span></th></tr></thead><tbody>${requests.map(r => `<tr><td><b>${P.category(r.category).name}</b>${r.details ? `<br><span class="muted">${P.esc(r.details)}</span>` : ""}</td><td>${P.esc(r.where)}</td><td>${P.fmtDate(r.from)} to ${P.fmtDate(r.to)}</td><td>${reqBadge(r.status)}</td><td style="text-align:right"><a class="btn btn-outline btn-sm" href="browse.html?where=${encodeURIComponent(r.where)}&category=${r.category}">Check again</a> <button class="btn btn-ghost btn-sm" type="button" data-withdraw="${r.id}">Withdraw</button></td></tr>`).join("")}</tbody></table></div>`
+          : `<div class="empty"><div class="mark">π</div><h3>No open requests</h3><p class="muted measure">When a search comes up empty, tell us what you need and we'll go looking for it.</p><a class="btn btn-primary" href="browse.html">Search a city</a></div>`}
+      </section>`;
+  };
+  root.addEventListener("click", (e) => {
+    const t = e.target.closest("[data-tab],[data-cancel],[data-remove],[data-simulate],[data-withdraw]"); if (!t) return;
+    if (t.dataset.withdraw) { P.store.removeRequest(t.dataset.withdraw); P.toast("Request withdrawn", "x"); render(); }
+    if (t.dataset.tab) { q.tab = t.dataset.tab; delete q.booked; delete q.published; history.replaceState(null, "", "dashboard.html?tab=" + q.tab); render(); document.getElementById("tab-" + q.tab).focus(); }
+    if (t.dataset.cancel) { if (confirm("Cancel this booking?")) { P.store.updateBooking(t.dataset.cancel, { status: "cancelled" }); delete q.booked; P.toast("Booking cancelled", "x"); render(); } }
+    if (t.dataset.simulate) { P.store.updateBooking(t.dataset.simulate, { status: "confirmed" }); delete q.booked; P.toast("Owner confirmed your booking"); render(); }
+    if (t.dataset.remove) { if (confirm("Remove this listing? Renters will no longer see it.")) { P.store.removeListing(t.dataset.remove); delete q.published; P.toast("Listing removed", "x"); render(); } }
+  });
+  document.addEventListener("click", (e) => { if (e.target.closest("[data-signout]")) setTimeout(render, 0); });
+  const origSignIn = P.store.signIn.bind(P.store); P.store.signIn = (u) => { origSignIn(u); render(); };
+  document.addEventListener("click", (e) => { if (e.target.closest("[data-fav]")) setTimeout(() => { if ((q.tab || "bookings") === "favs") render(); }, 0); });
+  render();
+})();
+</script>
+</body>
+</html>

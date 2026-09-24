@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pirents · Rent wheelchairs, scooters, bikes and cars from locals</title>
+<meta name="description" content="Rent mobility and travel gear from local owners. Wheelchairs, mobility scooters, bikes, accessible cars, strollers and more, delivered where you're staying.">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gluten:wght@500;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/tokens.css"><link rel="stylesheet" href="assets/css/base.css"><link rel="stylesheet" href="assets/css/components.css">
+<style>
+  .hero { padding: var(--space-12) 0 var(--space-12); }
+  .hero-inner { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: var(--space-8) var(--space-12); align-items: center; }
+  .hero-copy { display: grid; gap: var(--space-5); max-width: 620px; }
+  .hero .display { max-width: 18ch; }
+  .hero-art { position: relative; justify-self: end; width: min(100%, 400px); aspect-ratio: 1; display: grid; place-items: center; }
+  .hero-art::before { content: ""; position: absolute; inset: 6%; border-radius: 46% 54% 52% 48% / 52% 44% 56% 48%; background: var(--color-cream); transform: rotate(-8deg); }
+  .hero-art::after { content: ""; position: absolute; right: 2%; bottom: 8%; width: 28%; height: 28%; border-radius: 50%; background: var(--color-gold-100); z-index: 0; }
+  .hero-photos { position: relative; z-index: 1; width: 100%; height: 100%; }
+  .hero-photo { position: absolute; margin: 0; border-radius: var(--radius-lg, 16px); border: 3px solid var(--color-ink); background: var(--color-surface); box-shadow: 0 10px 0 rgba(47,42,39,.08); overflow: hidden; transition: transform var(--dur-base) var(--ease-out); }
+  .hero-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .hero-photo-1 { left: 4%; top: 6%; width: 52%; aspect-ratio: 3 / 4; transform: rotate(-4deg); }
+  .hero-photo-2 { right: 4%; top: 2%; width: 38%; aspect-ratio: 1; transform: rotate(5deg); }
+  .hero-photo-3 { right: 0; bottom: 10%; width: 50%; aspect-ratio: 4 / 3; transform: rotate(-2deg); z-index: 2; }
+  .hero-art:hover .hero-photo { transform: rotate(0); }
+  @media (prefers-reduced-motion: reduce) { .hero-photo { transition: none; } }
+  .hero-search { grid-column: 1 / -1; display: grid; gap: var(--space-5); }
+  @media (max-width: 899px) {
+    .hero { padding-top: var(--space-8); }
+    .hero-inner { grid-template-columns: 1fr; }
+    .hero-art { display: none; }
+  }
+  .trust-row { display: flex; gap: var(--space-6); flex-wrap: wrap; font-size: var(--text-sm); font-weight: 600; color: var(--color-ink-2); }
+  .trust-row span { display: inline-flex; align-items: center; gap: 6px; }
+  .trust-row .icon { color: var(--color-accent-500); }
+  .city-strip { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+  .owner-cta { background: var(--color-cocoa); color: #fff; border-radius: var(--radius-xl); padding: var(--space-12); display: grid; grid-template-columns: 1.2fr 1fr; gap: var(--space-8); align-items: center; }
+  .owner-cta h2 { color: #fff; }
+  .owner-cta p { color: #CFC7BE; }
+  .owner-cta .stat b { color: var(--color-gold-500); }
+  .owner-cta .stat span { color: #CFC7BE; }
+  @media (max-width: 899px) { .owner-cta { grid-template-columns: 1fr; padding: var(--space-8); } }
+  .quote-card { padding: var(--space-6); display: grid; gap: var(--space-4); }
+  .quote-card p { font-size: var(--text-lg); line-height: 1.5; }
+</style>
+</head>
+<body>
+<header id="site-header" class="site-header"></header>
+<main id="main">
+  <section class="hero">
+    <div class="container hero-inner">
+      <div class="hero-copy">
+        <span class="eyebrow">Peer-to-peer mobility rentals</span>
+        <h1 class="display">Get around anywhere. Rent the gear from someone who lives there.</h1>
+        <p class="lead measure">Wheelchairs, mobility scooters, bikes, accessible cars and strollers from local owners. Delivered to your hotel, or handed over at the airport.</p>
+      </div>
+      <div class="hero-art">
+        <div class="hero-photos">
+          <figure class="hero-photo hero-photo-1"><img src="assets/img/hero/scooter.webp" srcset="assets/img/hero/scooter.webp 1x, assets/img/hero/scooter@2x.webp 2x" width="240" height="320" alt="A smiling woman in a winter coat riding a rented mobility scooter along a riverside promenade" fetchpriority="high"></figure>
+          <figure class="hero-photo hero-photo-2"><img src="assets/img/hero/city-bike.webp" srcset="assets/img/hero/city-bike.webp 1x, assets/img/hero/city-bike@2x.webp 2x" width="170" height="170" alt="A man on a blue e-bike glancing back while riding through a city street" loading="lazy"></figure>
+          <figure class="hero-photo hero-photo-3"><img src="assets/img/hero/forest-bike.webp" srcset="assets/img/hero/forest-bike.webp 1x, assets/img/hero/forest-bike@2x.webp 2x" width="220" height="165" alt="A cyclist packing bags onto a loaded touring bike in a pine forest" loading="lazy"></figure>
+        </div>
+      </div>
+      <div class="hero-search">
+      <form class="search-bar" action="browse.html" method="get" role="search" aria-label="Search rentals">
+        <div class="search-seg"><label for="s-where">Where</label><input id="s-where" name="where" list="cities" placeholder="e.g. Lisbon" autocomplete="off"><datalist id="cities"></datalist></div>
+        <div class="search-seg"><label for="s-from">From</label><input id="s-from" name="from" type="date"></div>
+        <div class="search-seg"><label for="s-to">To</label><input id="s-to" name="to" type="date"></div>
+        <div class="search-seg"><label for="s-cat">What</label><select id="s-cat" name="category"><option value="">Anything</option></select></div>
+        <button class="btn btn-primary" type="submit">${search} Search</button>
+      </form>
+      <div class="trust-row"><span>${shield} Verified owners</span><span>${wallet} Pay only when confirmed</span><span>${truck} Delivery in most cities</span><span>${message} Local help on the ground</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="container">
+      <div class="section-head"><div><h2>What do you need?</h2><p class="muted">Browse by category, or search above for a city and dates.</p></div></div>
+      <div class="cat-grid" id="cat-grid"></div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="container">
+      <div class="section-head"><div><h2>Popular right now</h2><p class="muted">Highly rated gear from owners who reply fast.</p></div><a class="btn btn-outline" href="browse.html">See all listings ${arrow}</a></div>
+      <div class="grid grid-4" id="featured"></div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="container">
+      <div class="section-head"><div><h2>Cities with the most gear</h2><p class="muted">We're live across southern and central Europe and growing.</p></div></div>
+      <div class="city-strip" id="city-strip"></div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="container">
+      <div class="section-head"><div><h2>How renting works</h2><p class="muted">Three steps. No paperwork, no deposits held until you pick up.</p></div><a class="btn btn-ghost" href="how-it-works.html">Full details ${arrow}</a></div>
+      <div class="grid grid-3">
+        <article class="card step-card"><div class="step-num">1</div><h3>Find it</h3><p class="muted" style="margin-top:8px">Search a city and your dates. Filter by weight, seat width, range, delivery or airport handover.</p></article>
+        <article class="card step-card"><div class="step-num">2</div><h3>Book it</h3><p class="muted" style="margin-top:8px">Request or instant-book. You see the full price, fee and refundable deposit before you commit. You're charged only once the owner confirms.</p></article>
+        <article class="card step-card"><div class="step-num">3</div><h3>Get going</h3><p class="muted" style="margin-top:8px">Meet the owner, get a two-minute handover and go. Message them any time during the rental if something comes up.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="container">
+      <div class="owner-cta">
+        <div class="stack">
+          <span class="eyebrow" style="color:var(--color-gold-500)">For owners</span>
+          <h2>Your spare wheelchair could pay for its own upgrade.</h2>
+          <p class="lead" style="color:#CFC7BE">Most mobility gear sits unused for months. List it in ten minutes, set your own price and rules, and we handle payments, deposits and damage cover.</p>
+          <div class="row wrap"><a class="btn btn-primary btn-lg" href="list-item.html">List your item</a><a class="btn btn-ghost btn-lg" style="color:#fff" href="how-it-works.html#owners">How owners get paid</a></div>
+        </div>
+        <div class="grid grid-2" style="gap:var(--space-8)">
+          <div class="stat"><b>€310</b><span>average monthly earnings per listing</span></div>
+          <div class="stat"><b>€3,000</b><span>damage cover on every rental</span></div>
+          <div class="stat"><b>10%</b><span>flat service fee, nothing else</span></div>
+          <div class="stat"><b>48 h</b><span>payout after handover</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="container">
+      <div class="section-head"><div><h2>From people who rented</h2></div></div>
+      <div class="grid grid-3" id="quotes"></div>
+    </div>
+  </section>
+</main>
+<footer id="site-footer" class="site-footer"></footer>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+(function(){
+  const P = window.Pirents;
+  // Replace icon placeholders in static markup
+  document.querySelectorAll("main").forEach(m => { m.innerHTML = m.innerHTML.replace(/\$\{(\w+)\}/g, (_, n) => P.icon(n === "arrow" ? "arrowRight" : n)); });
+  document.getElementById("cities").innerHTML = window.PIRENTS_CITIES.map(c => `<option value="${c}">`).join("");
+  document.getElementById("s-cat").insertAdjacentHTML("beforeend", window.PIRENTS_CATEGORIES.map(c => `<option value="${c.id}">${c.name}</option>`).join(""));
+  const from = document.getElementById("s-from"), to = document.getElementById("s-to");
+  from.min = P.today(); to.min = P.today(1);
+  from.addEventListener("change", () => { to.min = from.value || P.today(1); if (to.value && to.value <= from.value) to.value = ""; });
+  const counts = {}; P.store.listings().forEach(l => counts[l.category] = (counts[l.category] || 0) + 1);
+  document.getElementById("cat-grid").innerHTML = window.PIRENTS_CATEGORIES.map(c => `<a class="cat-tile" href="browse.html?category=${c.id}"><span class="ico" style="background:${c.tile}">${P.icon(c.icon)}</span><span><strong>${c.name}</strong><br><small>${counts[c.id] || 0} listings</small></span></a>`).join("");
+  const featured = P.store.listings().filter(l => l.reviews).sort((a, b) => (b.rating * Math.log(b.reviews + 1)) - (a.rating * Math.log(a.reviews + 1))).slice(0, 8);
+  document.getElementById("featured").innerHTML = featured.map(P.listingCard).join("");
+  const cityCounts = {}; P.store.listings().forEach(l => cityCounts[l.city] = (cityCounts[l.city] || 0) + 1);
+  document.getElementById("city-strip").innerHTML = window.PIRENTS_CITIES.map(c => `<a class="chip" href="browse.html?where=${encodeURIComponent(c)}">${P.icon("pin")} ${c} <span class="muted">${cityCounts[c] || 0}</span></a>`).join("");
+  document.getElementById("quotes").innerHTML = window.PIRENTS_REVIEWS.map(r => `<figure class="card quote-card"><div class="rating" aria-label="5 out of 5" style="color:var(--color-gold-600)">${P.icon("star").repeat(5)}</div><p>“${P.esc(r.text)}”</p><figcaption class="row"><span class="avatar" aria-hidden="true">${P.initials(r.name)}</span><span><b>${P.esc(r.name)}</b><br><span class="muted text-sm">${r.date}</span></span></figcaption></figure>`).join("");
+})();
+</script>
+</body>
+</html>
