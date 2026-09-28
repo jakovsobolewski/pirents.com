@@ -60,13 +60,15 @@
   const KEY = "pirents.v1";
   const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch { return {}; } };
   const save = (s) => { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch {} };
-  let state = Object.assign({ user: null, listings: [], bookings: [], favourites: [], requests: [] }, load());
+  let state = Object.assign({ user: null, lang: "en", listings: [], bookings: [], favourites: [], requests: [] }, load());
   const commit = () => save(state);
 
   P.store = {
     get user() { return state.user; },
     signIn(u) { state.user = u; commit(); P.renderShell(); },
     signOut() { state.user = null; commit(); P.renderShell(); },
+    get lang() { return state.lang; },
+    setLang(code) { state.lang = code; commit(); P.renderShell(); },
     listings() { return [...state.listings, ...window.PIRENTS_LISTINGS]; },
     listing(id) { return this.listings().find(l => l.id === id); },
     addListing(l) { l.id = "u" + Date.now().toString(36); l.rating = 0; l.reviews = 0; l.mine = true; l.created = new Date().toISOString(); state.listings.unshift(l); commit(); return l; },
@@ -217,6 +219,28 @@
   /* ---------- Shell: header, footer, auth ---------- */
   const page = location.pathname.split("/").pop() || "index.html";
   const navItems = [["browse.html", "Browse"], ["how-it-works.html", "How it works"], ["list-item.html", "List your item"], ["dashboard.html", "Dashboard"]];
+  /* Languages for the cities we serve. Flags are simplified 3:2 SVGs so they render on every OS (emoji flags don't on Windows). */
+  const languages = [
+    { code: "en", name: "English", flag: '<rect width="30" height="20" fill="#012169"/><path d="M0 0l30 20M30 0L0 20" stroke="#fff" stroke-width="4"/><path d="M0 0l30 20M30 0L0 20" stroke="#C8102E" stroke-width="1.5"/><path d="M15 0v20M0 10h30" stroke="#fff" stroke-width="6"/><path d="M15 0v20M0 10h30" stroke="#C8102E" stroke-width="3.5"/>' },
+    { code: "es", name: "Español", flag: '<rect width="30" height="20" fill="#AA151B"/><rect y="5" width="30" height="10" fill="#F1BF00"/>' },
+    { code: "pt", name: "Português", flag: '<rect width="30" height="20" fill="#DA291C"/><rect width="12" height="20" fill="#046A38"/><circle cx="12" cy="10" r="4" fill="#FFE900" stroke="#DA291C" stroke-width=".8"/>' },
+    { code: "it", name: "Italiano", flag: '<rect width="30" height="20" fill="#fff"/><rect width="10" height="20" fill="#009246"/><rect x="20" width="10" height="20" fill="#CE2B37"/>' },
+    { code: "nl", name: "Nederlands", flag: '<rect width="30" height="20" fill="#fff"/><rect width="30" height="6.67" fill="#AE1C28"/><rect y="13.33" width="30" height="6.67" fill="#21468B"/>' },
+    { code: "de", name: "Deutsch", flag: '<rect width="30" height="20" fill="#FFCE00"/><rect width="30" height="13.33" fill="#DD0000"/><rect width="30" height="6.67" fill="#000"/>' },
+    { code: "el", name: "Ελληνικά", flag: '<rect width="30" height="20" fill="#0D5EAF"/><path d="M0 3.33h30M0 7.78h30M0 12.22h30M0 16.67h30" stroke="#fff" stroke-width="2.22"/><rect width="11.1" height="11.1" fill="#0D5EAF"/><path d="M5.55 0v11.1M0 5.55h11.1" stroke="#fff" stroke-width="2.22"/>' },
+    { code: "hr", name: "Hrvatski", flag: '<rect width="30" height="20" fill="#fff"/><rect width="30" height="6.67" fill="#FF0000"/><rect y="13.33" width="30" height="6.67" fill="#171796"/><path d="M12 5h6v7a3 3 0 0 1-6 0z" fill="#fff" stroke="#FF0000" stroke-width=".8"/><path d="M12 5h2v2h-2zM16 5h2v2h-2zM14 7h2v2h-2zM12 9h2v2h-2zM16 9h2v2h-2z" fill="#FF0000"/>' }
+  ];
+  const flag = (l) => `<svg class="flag" viewBox="0 0 30 20" aria-hidden="true">${l.flag}</svg>`;
+  const currentLang = () => languages.find(l => l.code === P.store.lang) || languages[0];
+  document.documentElement.lang = currentLang().code;
+  const langPicker = () => {
+    const cur = currentLang();
+    return `<div class="lang-picker">
+      <button class="btn btn-ghost lang-btn" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="lang-menu" aria-label="Language: ${cur.name}" data-lang-toggle>${flag(cur)}${P.icon("chevronDown", "icon-sm")}</button>
+      <ul class="lang-menu" id="lang-menu" role="menu" aria-label="Choose language" hidden>${languages.map(l => `<li role="none"><button type="button" role="menuitemradio" aria-checked="${l.code === cur.code}" lang="${l.code}" data-lang="${l.code}">${flag(l)}<span>${l.name}</span>${l.code === cur.code ? P.icon("check", "icon-sm") : ""}</button></li>`).join("")}</ul>
+    </div>`;
+  };
+
   const logo = (inverse) => `<a class="logo${inverse ? " inverse" : ""}" href="index.html" aria-label="Pirents home">${P.pie()}<span>Pi Rents</span></a>`;
   P.logo = logo;
 
@@ -232,6 +256,7 @@
       <div class="nav-actions">
         <a class="btn btn-outline hide-mobile" href="list-item.html">${P.icon("plus")} List your item</a>
         ${account}
+        ${langPicker()}
         <button class="btn btn-ghost btn-icon menu-btn" type="button" aria-label="Open menu" aria-expanded="false" data-menu>${P.icon("menu", "icon-lg")}</button>
       </div></div>
       <div class="mobile-sheet" data-open="false" id="mobile-sheet">
@@ -250,6 +275,30 @@
       <div class="footer-bottom"><span>© ${new Date().getFullYear()} Pirents. Made for getting around.</span><span>Prototype. Bookings and accounts are stored in this browser only.</span></div>
     </div>`;
   };
+
+  const langMenu = () => document.getElementById("lang-menu");
+  const closeLang = (refocus) => { const m = langMenu(); if (!m || m.hidden) return; m.hidden = true; const b = document.querySelector("[data-lang-toggle]"); b.setAttribute("aria-expanded", "false"); if (refocus) b.focus(); };
+  const openLang = () => { const m = langMenu(); m.hidden = false; document.querySelector("[data-lang-toggle]").setAttribute("aria-expanded", "true"); (m.querySelector('[aria-checked="true"]') || m.querySelector("button")).focus(); };
+  document.addEventListener("keydown", (e) => {
+    const m = langMenu(); if (!m || m.hidden) return;
+    if (e.key === "Escape") { e.stopPropagation(); closeLang(true); return; }
+    if (e.key === "Tab") { closeLang(false); return; }
+    const items = [...m.querySelectorAll("button")], i = items.indexOf(document.activeElement);
+    const next = { ArrowDown: i + 1, ArrowUp: i - 1, Home: 0, End: items.length - 1 }[e.key];
+    if (next !== undefined) { e.preventDefault(); items[(next + items.length) % items.length].focus(); }
+  }, true);
+  document.addEventListener("click", (e) => {
+    if (e.target.closest("[data-lang-toggle]")) { langMenu().hidden ? openLang() : closeLang(false); return; }
+    const pick = e.target.closest("[data-lang]");
+    if (pick) {
+      const l = languages.find(x => x.code === pick.dataset.lang);
+      if (l.code !== P.store.lang) { P.store.setLang(l.code); document.documentElement.lang = l.code; P.toast(`Language set to ${l.name}`, "check"); }
+      else closeLang(false);
+      document.querySelector("[data-lang-toggle]")?.focus();
+      return;
+    }
+    if (!e.target.closest(".lang-picker")) closeLang(false);
+  });
 
   const closeMenu = () => { const s = document.getElementById("mobile-sheet"); if (!s || s.dataset.open !== "true") return; s.dataset.open = "false"; const b = document.querySelector("[data-menu]"); b.setAttribute("aria-expanded", "false"); b.focus(); };
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeMenu(); });

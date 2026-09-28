@@ -97,6 +97,18 @@ a.card:hover, .card.link:hover { box-shadow: var(--shadow-md); transform: transl
 .nav-actions { display: flex; align-items: center; gap: var(--space-2); margin-left: auto; }
 .avatar { width: 40px; height: 40px; border-radius: var(--radius-full); background: var(--color-cream); color: var(--color-crust-dark); display: grid; place-items: center; font-weight: 800; font-size: var(--text-sm); flex: none; }
 .avatar.lg { width: 56px; height: 56px; font-size: var(--text-h4); }
+/* Language picker: flag button in the header corner, dropdown menu of languages */
+.lang-picker { position: relative; }
+.lang-btn { padding: 0 8px; gap: 4px; }
+.lang-btn .icon-sm { color: var(--color-ink-2); transition: transform var(--dur-fast); }
+.lang-btn[aria-expanded="true"] .icon-sm { transform: rotate(180deg); }
+.flag { width: 24px; height: 16px; border-radius: 3px; flex: none; box-shadow: 0 0 0 1px rgba(47,42,39,.12); }
+.lang-menu { position: absolute; right: 0; top: calc(100% + 8px); z-index: 55; min-width: 200px; list-style: none; margin: 0; padding: 6px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); }
+.lang-menu[hidden] { display: none; }
+.lang-menu button { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 44px; padding: 0 12px; border: 0; background: transparent; border-radius: var(--radius-sm); font-weight: 600; color: var(--color-ink); text-align: left; cursor: pointer; }
+.lang-menu button:hover { background: var(--color-bg); }
+.lang-menu button[aria-checked="true"] { background: var(--color-accent-50); color: var(--color-accent-700); font-weight: 800; }
+.lang-menu button .icon-sm { margin-left: auto; }
 .menu-btn { display: none; }
 @media (max-width: 899px) {
   .nav-links, .nav-actions .hide-mobile { display: none; }
