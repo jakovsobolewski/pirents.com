@@ -28,7 +28,19 @@ Then open http://localhost:8080. Opening `index.html` directly from disk also wo
 | `assets/css/base.css` | Reset, typography, layout utilities |
 | `assets/css/components.css` | Every component from the guidelines |
 | `assets/js/app.js` | Shared runtime: icons, header/footer, localStorage store, auth dialog, toasts, listing card |
-| `assets/js/data.js` | Seed listings, categories, features |
+| `assets/js/data.js` | Seed listings, categories, features, city metadata |
+| `scripts/build-pages.js` | Generates the SEO landing pages and sitemap |
+| `docs/` | Competitor SEO analysis and changelog |
+
+## SEO landing pages
+
+`rentals/{city}/`, `rentals/{city}/{category}/`, `rentals/{city}/airport/` and `gear/{category}/` are generated from the seed data:
+
+```bash
+node scripts/build-pages.js
+```
+
+This also regenerates `sitemap.xml`. See `docs/seo-competitor-analysis.md` for the research behind the structure and `docs/seo-changelog.md` for what has been implemented.
 
 ## Prototype notes
 
@@ -42,4 +54,4 @@ Then open http://localhost:8080. Opening `index.html` directly from disk also wo
 - Brand Red `#B5434B` for primary actions, Crust Gold `#E8A93A` and Cream `#F5E6C3` for warmth, Cocoa `#4A4038` for the wordmark, warm Charcoal `#2F2A27` for text and outlines. All lifted from the logo.
 - Background / secondary: `#F7F3EC` (Linen). Cards are white on Linen.
 - Logo: a sticker-style slice of pie (pi, pie, a slice of somewhere new) beside the wordmark `PI RENTS`. The `.com` appears only on the standalone asset.
-- Fonts: Gluten for headlines and the wordmark, Nunito for everything you read.
+- Fonts: Squeaky for headlines and the wordmark, Nunito for everything you read.

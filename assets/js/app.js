@@ -1,6 +1,9 @@
 /* Pirents shared runtime: icons, shell, store, helpers. No framework, no build step. */
 (function () {
   const P = (window.Pirents = window.Pirents || {});
+  /* Base path: generated pages under /rentals/... set <meta name="pirents-base" content="../../"> so shell links resolve. */
+  const B = (document.querySelector('meta[name="pirents-base"]') || {}).content || "";
+  P.base = B;
 
   /* ---------- Icons (Lucide-style paths) ---------- */
   const paths = {
@@ -89,6 +92,9 @@
   P.today = (offset = 0) => { const d = new Date(); d.setDate(d.getDate() + offset); return d.toISOString().slice(0, 10); };
   P.qs = () => Object.fromEntries(new URLSearchParams(location.search));
   P.category = (id) => window.PIRENTS_CATEGORIES.find(c => c.id === id) || window.PIRENTS_CATEGORIES[7];
+  P.cityMeta = (name) => { const k = Object.keys(window.PIRENTS_CITY_META || {}).find(c => c.toLowerCase() === String(name || "").trim().toLowerCase()); return k ? Object.assign({ name: k }, window.PIRENTS_CITY_META[k]) : null; };
+  P.categorySlug = (id) => (window.PIRENTS_CATEGORY_SLUGS || {})[id];
+  P.staticPath = (city, category) => { const m = P.cityMeta(city); if (!m) return null; return "rentals/" + m.slug + "/" + (category ? P.categorySlug(category) + "/" : ""); };
   P.featureName = (f) => window.PIRENTS_FEATURES[f] || f;
   P.initials = (name) => name.split(" ").map(s => s[0]).join("").slice(0, 2).toUpperCase();
   P.esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -124,7 +130,7 @@
         <div class="features">${feats}</div>
         <div class="foot"><span class="price">${P.money(l.price)} <span class="unit">/ day</span></span>${l.features?.includes("instant") ? `<span class="badge badge-accent">${P.icon("zap", "icon-sm")} Instant</span>` : ""}</div>
       </div>
-      <a class="stretch" href="listing.html?id=${encodeURIComponent(l.id)}" aria-label="${P.esc(name)}"></a>
+      <a class="stretch" href="${B}listing.html?id=${encodeURIComponent(l.id)}" aria-label="${P.esc(name)}"></a>
     </article>`;
   };
   document.addEventListener("click", (e) => {
@@ -185,7 +191,7 @@
             <div class="field span-2"><label for="sc-details">Anything specific? <span class="muted" style="font-weight:500">(optional)</span></label><input class="input" id="sc-details" name="details" maxlength="160" placeholder="e.g. seat width 46 cm, needs to fit in a taxi boot"></div>
             <div class="field span-2"><label for="sc-email">Where should we send the good news?</label><input class="input" id="sc-email" name="email" type="email" autocomplete="email" placeholder="e.g. you@example.com" value="${P.esc(u?.email || "")}" required><span class="error-msg">${P.icon("alert", "icon-sm")} Enter a valid email</span></div>
           </div>
-          <div class="row wrap"><button class="btn btn-primary btn-lg" type="submit">${P.icon("search")} Find it for me</button>${filtered ? `<button class="btn btn-ghost" type="button" data-scout-reset>Clear filters instead</button>` : `<a class="btn btn-ghost" href="browse.html">See everything, everywhere</a>`}</div>
+          <div class="row wrap"><button class="btn btn-primary btn-lg" type="submit">${P.icon("search")} Find it for me</button>${filtered ? `<button class="btn btn-ghost" type="button" data-scout-reset>Clear filters instead</button>` : `<a class="btn btn-ghost" href="${B}browse.html">See everything, everywhere</a>`}</div>
         </form>
       </div>
     </section>`;
@@ -197,7 +203,7 @@
       ${scene(true)}
       <h2>π is on the case in ${P.esc(r.where)}.</h2>
       <p class="ink-2">We'll look for a ${cat} owner in ${P.esc(r.where)} for ${P.fmtDate(r.from)} to ${P.fmtDate(r.to)} and email <b>${P.esc(r.email)}</b> as soon as we have one. You can follow the request from your dashboard.</p>
-      <div class="row wrap" style="justify-content:center"><a class="btn btn-primary" href="dashboard.html?tab=requests">See my requests</a><a class="btn btn-outline" href="browse.html">Browse other cities</a></div>
+      <div class="row wrap" style="justify-content:center"><a class="btn btn-primary" href="${B}dashboard.html?tab=requests">See my requests</a><a class="btn btn-outline" href="${B}browse.html">Browse other cities</a></div>
     </section>`;
   };
   document.addEventListener("submit", (e) => {
@@ -214,38 +220,93 @@
   });
   document.addEventListener("input", (e) => { const f = e.target.closest("form[data-scout] .field.error"); if (f) f.classList.remove("error"); });
 
+
+  /* ---------- SEO helper for JS-rendered pages ---------- */
+  P.seo = ({ title, description, canonical, jsonld, robots } = {}) => {
+    const set = (sel, attr, val, create) => { let el = document.head.querySelector(sel); if (!el && create) { el = create(); document.head.appendChild(el); } if (el && val != null) el.setAttribute(attr, val); };
+    if (title) { document.title = title; set('meta[property="og:title"]', "content", title); set('meta[name="twitter:title"]', "content", title); }
+    if (description) { set('meta[name="description"]', "content", description); set('meta[property="og:description"]', "content", description); set('meta[name="twitter:description"]', "content", description); }
+    if (robots) set('meta[name="robots"]', "content", robots, () => { const m = document.createElement("meta"); m.name = "robots"; return m; });
+    if (canonical) { const url = "https://pirents.com/" + canonical; set('link[rel="canonical"]', "href", url); set('meta[property="og:url"]', "content", url); }
+    if (jsonld) { document.head.querySelectorAll('script[data-seo]').forEach(n => n.remove()); [].concat(jsonld).forEach(obj => { const sc = document.createElement("script"); sc.type = "application/ld+json"; sc.dataset.seo = "1"; sc.textContent = JSON.stringify(obj); document.head.appendChild(sc); }); }
+  };
+
+
+  /* ---------- Language selector: flag with the language name inside ---------- */
+  P.LANGS = [
+    { code: "en", name: "English",    flag: "gb" },
+    { code: "pt", name: "Português",  flag: "pt" },
+    { code: "es", name: "Español",    flag: "es" },
+    { code: "nl", name: "Nederlands", flag: "nl" },
+    { code: "el", name: "Ελληνικά",   flag: "gr" },
+    { code: "hr", name: "Hrvatski",   flag: "hr" },
+    { code: "it", name: "Italiano",   flag: "it" },
+    { code: "de", name: "Deutsch",    flag: "de" }
+  ];
+  const flagArt = {
+    gb: '<rect width="64" height="28" fill="#1B3F8F"/><path d="M0 0 64 28M64 0 0 28" stroke="#fff" stroke-width="6"/><path d="M0 0 64 28M64 0 0 28" stroke="#C8102E" stroke-width="2.5"/><path d="M32 0v28M0 14h64" stroke="#fff" stroke-width="9"/><path d="M32 0v28M0 14h64" stroke="#C8102E" stroke-width="5"/>',
+    pt: '<rect width="64" height="28" fill="#DA291C"/><rect width="24" height="28" fill="#046A38"/><circle cx="24" cy="14" r="6.5" fill="#FFE900" stroke="#DA291C" stroke-width="1.5"/>',
+    es: '<rect width="64" height="28" fill="#AA151B"/><rect y="7" width="64" height="14" fill="#F1BF00"/>',
+    nl: '<rect width="64" height="28" fill="#21468B"/><rect width="64" height="18.7" fill="#fff"/><rect width="64" height="9.3" fill="#AE1C28"/>',
+    gr: '<rect width="64" height="28" fill="#0D5EAF"/><path d="M0 4.7h64M0 10.9h64M0 17.1h64M0 23.3h64" stroke="#fff" stroke-width="3.1"/><rect width="18" height="15.5" fill="#0D5EAF"/><path d="M9 0v15.5M0 7.75h18" stroke="#fff" stroke-width="3.1"/>',
+    hr: '<rect width="64" height="28" fill="#171796"/><rect width="64" height="18.7" fill="#fff"/><rect width="64" height="9.3" fill="#FF0000"/><g transform="translate(26 7)"><rect width="12" height="14" rx="1.5" fill="#fff"/><path d="M0 0h3v3H0zM6 0h3v3H6zM3 3h3v3H3zM9 3h3v3H9zM0 6h3v3H0zM6 6h3v3H6zM3 9h3v3H3zM9 9h3v3H9z" fill="#FF0000"/></g>',
+    it: '<rect width="64" height="28" fill="#CE2B37"/><rect width="42.7" height="28" fill="#fff"/><rect width="21.3" height="28" fill="#009246"/>',
+    de: '<rect width="64" height="28" fill="#FFCE00"/><rect width="64" height="18.7" fill="#DD0000"/><rect width="64" height="9.3" fill="#000"/>'
+  };
+  P.flag = (lang, cls = "") => `<svg class="flag ${cls}" viewBox="0 0 64 28" aria-hidden="true" focusable="false"><g>${flagArt[lang.flag]}</g><rect width="64" height="28" fill="rgba(20,16,14,.42)"/><text x="32" y="18.5" text-anchor="middle" font-family="Nunito, system-ui, sans-serif" font-weight="800" font-size="${lang.name.length > 8 ? 9.5 : 11}" fill="#fff" letter-spacing=".3">${P.esc(lang.name)}</text></svg>`;
+  P.lang = () => { let c = "en"; try { c = localStorage.getItem("pirents.lang") || "en"; } catch {} return P.LANGS.find(l => l.code === c) || P.LANGS[0]; };
+  P.setLang = (code) => { try { localStorage.setItem("pirents.lang", code); } catch {} document.documentElement.lang = code; };
+  P.langMenu = () => {
+    const cur = P.lang();
+    return `<div class="lang" data-lang-menu>
+      <button class="lang-btn" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Language: ${P.esc(cur.name)}. Change language" data-lang-toggle>${P.flag(cur)}</button>
+      <ul class="lang-list" role="listbox" aria-label="Choose language" hidden>${P.LANGS.map(l => `<li role="option" aria-selected="${l.code === cur.code}"><button type="button" data-lang="${l.code}" aria-label="${P.esc(l.name)}">${P.flag(l)}</button></li>`).join("")}</ul>
+    </div>`;
+  };
+  document.addEventListener("click", (e) => {
+    const toggle = e.target.closest("[data-lang-toggle]");
+    const open = (menu, on) => { const list = menu.querySelector(".lang-list"), btn = menu.querySelector("[data-lang-toggle]"); list.hidden = !on; btn.setAttribute("aria-expanded", on); if (on) list.querySelector('[aria-selected="true"] button')?.focus(); };
+    if (toggle) { const menu = toggle.closest("[data-lang-menu]"); open(menu, menu.querySelector(".lang-list").hidden); return; }
+    const pick = e.target.closest("[data-lang]");
+    if (pick) { const l = P.LANGS.find(x => x.code === pick.dataset.lang); P.setLang(l.code); P.renderShell(); if (l.code !== "en") P.toast(`${l.name} selected. Pages are in English while translations are on the way.`, "info"); document.querySelector("[data-lang-toggle]")?.focus(); return; }
+    document.querySelectorAll("[data-lang-menu]").forEach(m => { if (!m.contains(e.target)) open(m, false); });
+  });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") document.querySelectorAll("[data-lang-menu]").forEach(m => { const list = m.querySelector(".lang-list"); if (!list.hidden) { list.hidden = true; m.querySelector("[data-lang-toggle]").setAttribute("aria-expanded", "false"); m.querySelector("[data-lang-toggle]").focus(); } }); });
+
   /* ---------- Shell: header, footer, auth ---------- */
   const page = location.pathname.split("/").pop() || "index.html";
   const navItems = [["browse.html", "Browse"], ["how-it-works.html", "How it works"], ["list-item.html", "List your item"], ["dashboard.html", "Dashboard"]];
-  const logo = (inverse) => `<a class="logo${inverse ? " inverse" : ""}" href="index.html" aria-label="Pirents home">${P.pie()}<span>Pi Rents</span></a>`;
+  const logo = (inverse) => `<a class="logo${inverse ? " inverse" : ""}" href="${B}index.html" aria-label="Pirents home">${P.pie()}<span>Pi Rents</span></a>`;
   P.logo = logo;
 
   P.renderShell = () => {
+    document.documentElement.lang = P.lang().code;
     const u = P.store.user;
     const account = u
-      ? `<a class="btn btn-ghost" href="dashboard.html" style="padding:0 8px 0 4px"><span class="avatar" aria-hidden="true">${P.initials(u.name)}</span><span class="hide-mobile">${P.esc(u.name.split(" ")[0])}</span></a>`
+      ? `<a class="btn btn-ghost" href="${B}dashboard.html" style="padding:0 8px 0 4px"><span class="avatar" aria-hidden="true">${P.initials(u.name)}</span><span class="hide-mobile">${P.esc(u.name.split(" ")[0])}</span></a>`
       : `<button class="btn btn-ghost hide-mobile" type="button" data-auth>Sign in</button>`;
     const header = document.getElementById("site-header");
     if (header) header.innerHTML = `<a class="skip-link" href="#main">Skip to content</a><div class="container">
       ${logo(false)}
-      <ul class="nav-links">${navItems.slice(0, 2).concat([navItems[3]]).map(([h, t]) => `<li><a href="${h}"${page === h ? ' aria-current="page"' : ""}>${t}</a></li>`).join("")}</ul>
+      <ul class="nav-links">${navItems.slice(0, 2).concat([navItems[3]]).map(([h, t]) => `<li><a href="${B}${h}"${page === h ? ' aria-current="page"' : ""}>${t}</a></li>`).join("")}</ul>
       <div class="nav-actions">
-        <a class="btn btn-outline hide-mobile" href="list-item.html">${P.icon("plus")} List your item</a>
+        ${P.langMenu()}
+        <a class="btn btn-outline hide-mobile" href="${B}list-item.html">${P.icon("plus")} List your item</a>
         ${account}
         <button class="btn btn-ghost btn-icon menu-btn" type="button" aria-label="Open menu" aria-expanded="false" data-menu>${P.icon("menu", "icon-lg")}</button>
       </div></div>
       <div class="mobile-sheet" data-open="false" id="mobile-sheet">
         <div class="row between" style="margin-bottom:16px">${logo(false)}<button class="btn btn-ghost btn-icon" type="button" aria-label="Close menu" data-menu-close>${P.icon("x", "icon-lg")}</button></div>
-        <nav>${navItems.map(([h, t]) => `<a href="${h}">${t}</a>`).join("")}${u ? `<a href="#" data-signout>Sign out</a>` : `<a href="#" data-auth>Sign in</a>`}</nav>
-        <a class="btn btn-primary btn-block btn-lg" href="list-item.html" style="margin-top:24px">${P.icon("plus")} List your item</a>
+        <nav>${navItems.map(([h, t]) => `<a href="${B}${h}">${t}</a>`).join("")}${u ? `<a href="#" data-signout>Sign out</a>` : `<a href="#" data-auth>Sign in</a>`}</nav>
+        <a class="btn btn-primary btn-block btn-lg" href="${B}list-item.html" style="margin-top:24px">${P.icon("plus")} List your item</a>
       </div>`;
     const footer = document.getElementById("site-footer");
     if (footer) footer.innerHTML = `<div class="container">
       <div class="footer-grid">
         <div class="stack">${logo(true)}<p class="measure" style="max-width:36ch">Rent wheelchairs, scooters, bikes, cars and more from local owners. Get around wherever you are.</p></div>
-        <div><h4>Rent</h4><ul>${window.PIRENTS_CATEGORIES.slice(0, 5).map(c => `<li><a href="browse.html?category=${c.id}">${c.name}</a></li>`).join("")}</ul></div>
-        <div><h4>Cities</h4><ul>${window.PIRENTS_CITIES.slice(0, 5).map(c => `<li><a href="browse.html?where=${c}">${c}</a></li>`).join("")}</ul></div>
-        <div><h4>Pirents</h4><ul><li><a href="how-it-works.html">How it works</a></li><li><a href="list-item.html">List your item</a></li><li><a href="how-it-works.html#trust">Trust &amp; safety</a></li><li><a href="styleguide.html">Design system</a></li></ul></div>
+        <div><h4>Rent</h4><ul>${window.PIRENTS_CATEGORIES.slice(0, 5).map(c => `<li><a href="${B}browse.html?category=${c.id}">${c.name}</a></li>`).join("")}</ul></div>
+        <div><h4>Cities</h4><ul>${window.PIRENTS_CITIES.slice(0, 5).map(c => `<li><a href="${B}browse.html?where=${c}">${c}</a></li>`).join("")}</ul></div>
+        <div><h4>Pirents</h4><ul><li><a href="${B}how-it-works.html">How it works</a></li><li><a href="${B}list-item.html">List your item</a></li><li><a href="${B}how-it-works.html#trust">Trust &amp; safety</a></li><li><a href="${B}styleguide.html">Design system</a></li></ul></div>
       </div>
       <div class="footer-bottom"><span>© ${new Date().getFullYear()} Pirents. Made for getting around.</span><span>Prototype. Bookings and accounts are stored in this browser only.</span></div>
     </div>`;

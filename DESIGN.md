@@ -45,7 +45,7 @@ The logo is a **slice of pie** drawn in a flat, hand-outlined sticker style: a b
 - The mark is delivered as inline SVG (`Pirents.pie()` in `app.js`) so it scales from favicon to hero without a raster.
 
 ### Wordmark
-**PI RENTS** in Gluten ExtraBold, uppercase, tracking +0.035em, in **Cocoa** (`#4A4038`): a warm near-black that reads as friendly rather than corporate, and lets the pie and the red buttons carry the colour. The mark sits left of the wordmark with a gap of about 0.45em.
+**PI RENTS** in Squeaky ExtraBold, uppercase, tracking +0.035em, in **Cocoa** (`#4A4038`): a warm near-black that reads as friendly rather than corporate, and lets the pie and the red buttons carry the colour. The mark sits left of the wordmark with a gap of about 0.45em.
 
 The **.com** suffix appears only on the standalone logo asset (`assets/img/logo.svg`), social avatars and print, where the domain matters. It is never shown in the site header or footer.
 
@@ -171,9 +171,9 @@ Practical consequences:
 ### Families
 Two faces, one job each.
 
-**Gluten** (Google Fonts, weights 500, 700, 800) is the display face: wordmark, headlines, step numbers, big stats, the Scout's speech. It is a rounded, hand-drawn marker face with a slightly wobbly baseline, matching the lettering in the logo. It is never used below 18 px and never for body copy or form labels.
+**Squeaky** (custom, self-hosted from `assets/fonts/squeaky.ttf`, single weight) is the display face: wordmark, headlines, step numbers, big stats, the Scout's speech. It is the hand-lettered face from the logo itself. Because its strokes are thin, it is used only at 32 px and above: the wordmark, display, h1 and h2, step numbers, big stats and the Scout's speech. Card titles (h3, h4), eyebrows, body and labels stay in Nunito. Headlines get a hairline text-stroke (0.02em) and synthetic bold so the strokes match the marker weight of the logo. It has no euro sign or slash, so those characters fall back to Nunito automatically; keep prices out of display-face headings where possible.
 
-**Nunito** (Google Fonts, weights 400 to 800) is the text face: body, buttons, labels, prices, tables. Rounded terminals keep it friendly next to Gluten, while its even rhythm and clear `1 l I` and `0 O` keep addresses and prices legible. Tabular figures are switched on for prices and tables.
+**Nunito** (Google Fonts, weights 400 to 800) is the text face: body, buttons, labels, prices, tables. Rounded terminals keep it friendly next to Squeaky, while its even rhythm and clear `1 l I` and `0 O` keep addresses and prices legible. Tabular figures are switched on for prices and tables.
 
 Fallback for both: `system-ui, -apple-system, "Segoe UI", Roboto, sans-serif`.
 
@@ -182,16 +182,16 @@ Base size 16 px. Line heights are unitless.
 
 | Token | Size / line height | Face, weight | Tracking | Use |
 |---|---|---|---|---|
-| `--text-display` | 56 / 1.02 | Gluten 800 | +0.01em | Hero headline only |
-| `--text-h1` | 40 / 1.08 | Gluten 800 | +0.01em | Page titles |
-| `--text-h2` | 32 / 1.12 | Gluten 700 | +0.01em | Section titles |
-| `--text-h3` | 24 / 1.2 | Gluten 700 | +0.01em | Card and panel titles |
-| `--text-h4` | 20 / 1.25 | Gluten 700 | +0.01em | Sub-headings, listing names |
+| `--text-display` | 56 / 1.02 | Squeaky 800 | +0.01em | Hero headline only |
+| `--text-h1` | 40 / 1.08 | Squeaky 800 | +0.01em | Page titles |
+| `--text-h2` | 32 / 1.12 | Squeaky 700 | +0.01em | Section titles |
+| `--text-h3` | 24 / 1.2 | Nunito 800 | 0 | Card and panel titles |
+| `--text-h4` | 20 / 1.25 | Nunito 800 | 0 | Sub-headings, listing names |
 | `--text-lg` | 18 / 1.55 | Nunito 400 | 0 | Lead paragraphs |
 | `--text-base` | 16 / 1.5 | Nunito 400 | 0 | Body |
 | `--text-sm` | 14 / 1.45 | Nunito 500 | 0 | Meta, labels, secondary UI |
 | `--text-xs` | 12 / 1.35 | Nunito 700 | +0.02em | Badges (uppercase) |
-| Eyebrow | 14 / 1.3 | Gluten 700 | +0.06em | Uppercase section kickers, Brand Red |
+| Eyebrow | 12 / 1.3 | Nunito 800 | +0.1em | Uppercase section kickers, Brand Red |
 
 On screens under 640 px, display drops to 40 px and h1 to 32 px.
 
@@ -199,8 +199,8 @@ On screens under 640 px, display drops to 40 px and h1 to 32 px.
 - Maximum measure for body text: 65 characters.
 - Never go below 14 px for anything the user must read; 12 px only for uppercase badges.
 - Headlines are sentence case; the wordmark and eyebrows are the only uppercase settings.
-- Gluten gets positive tracking, never negative; its letterforms need air.
-- Gluten is Pirents' own voice. Text written by owners (listing titles, descriptions, rules) is always set in Nunito, so a long or number-heavy title like "Foldable 4-wheel mobility scooter, 25 km range" stays legible. Listing cards use Nunito 800 at 20 px; the listing page title uses Nunito 800 at 32 px.
+- Squeaky gets positive tracking, never negative; its letterforms need air.
+- Squeaky is Pirents' own voice. Text written by owners (listing titles, descriptions, rules) is always set in Nunito, so a long or number-heavy title like "Foldable 4-wheel mobility scooter, 25 km range" stays legible. Listing cards use Nunito 800 at 20 px; the listing page title uses Nunito 800 at 32 px.
 - Prices: Nunito 800, tabular figures, currency symbol attached: `€18` never `€ 18`. Per-unit in Muted: `€18 / day`.
 
 ---
@@ -286,6 +286,7 @@ Image (4:3, radius `--radius-lg` top only), category badge top-left over the ima
 ### Navigation
 - Header: 72 px, Paper, 1 px bottom border, sticky. Logo left, primary links centre (desktop), "List your item" outline button + account right.
 - Under 900 px: logo, "List your item" ghost icon, and a menu button opening a full-height sheet.
+- Language selector: a single flag in the header with the language's own name written inside it in white on a darkened band; no separate label or arrow. It opens a two-column grid of the other flags in the same style, current one outlined in Brand Red. 64 × 28 px, 7 px radius; 56 × 24.5 px on phones. The button carries an `aria-label` with the current language and the list is a `listbox`; Escape and outside clicks close it.
 - Footer: Charcoal background, warm grey text, Gold column headings, inverse logo variant. Secondary buttons, selected chips, toasts and the owner panel use Cocoa instead of Charcoal so dark surfaces feel warm.
 
 ### Stepper (List your item)

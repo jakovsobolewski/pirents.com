@@ -3,11 +3,26 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Browse rentals · Pirents</title>
+<title>Browse mobility gear to rent by city and category | Pirents</title>
+<meta name="description" content="Search wheelchairs, mobility scooters, e-bikes, accessible cars, strollers and rollators to rent from local owners. Filter by city, dates, weight, delivery and airport handover.">
+<link rel="canonical" href="https://pirents.com/browse.html">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#F7F3EC">
+<meta property="og:site_name" content="Pirents">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Browse mobility gear to rent by city and category | Pirents">
+<meta property="og:description" content="Search wheelchairs, mobility scooters, e-bikes, accessible cars, strollers and rollators to rent from local owners. Filter by city, dates, weight, delivery and airport handover.">
+<meta property="og:url" content="https://pirents.com/browse.html">
+<meta property="og:image" content="https://pirents.com/assets/img/hero/scooter@2x.webp">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Browse mobility gear to rent by city and category | Pirents">
+<meta name="twitter:description" content="Search wheelchairs, mobility scooters, e-bikes, accessible cars, strollers and rollators to rent from local owners. Filter by city, dates, weight, delivery and airport handover.">
+<meta name="twitter:image" content="https://pirents.com/assets/img/hero/scooter@2x.webp">
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Gluten:wght@500;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/tokens.css"><link rel="stylesheet" href="assets/css/base.css"><link rel="stylesheet" href="assets/css/components.css">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/tokens.css?v=20260929c"><link rel="stylesheet" href="assets/css/base.css?v=20260929c"><link rel="stylesheet" href="assets/css/components.css?v=20260929c">
 <style>
   .browse-top { padding: var(--space-8) 0 var(--space-6); }
   .browse-layout { display: grid; grid-template-columns: 280px 1fr; gap: var(--space-8); align-items: start; padding-bottom: var(--space-16); }
@@ -71,8 +86,8 @@
   </div>
 </main>
 <footer id="site-footer" class="site-footer"></footer>
-<script src="assets/js/data.js"></script>
-<script src="assets/js/app.js"></script>
+<script src="assets/js/data.js?v=20260929c"></script>
+<script src="assets/js/app.js?v=20260929c"></script>
 <script>
 (function(){
   const P = window.Pirents, q = P.qs();
@@ -113,6 +128,15 @@
     else list.sort((a, b) => (b.rating * Math.log(b.reviews + 2) + (b.mine ? 100 : 0)) - (a.rating * Math.log(a.reviews + 2) + (a.mine ? 100 : 0)));
     const cat = state.category ? P.category(state.category).name : "All listings";
     $("#results-title").textContent = where ? `${cat} in ${$("#s-where").value.trim()}` : cat;
+    const cityName = $("#s-where").value.trim();
+    const filtered = !!(feats.length || min || max < Infinity || rating !== "0");
+    P.seo({
+      title: (cityName ? `${cat} to rent in ${cityName}` : `${cat === "All listings" ? "Mobility gear" : cat} to rent`) + " from local owners | Pirents",
+      description: cityName ? `Rent ${cat === "All listings" ? "wheelchairs, mobility scooters, bikes and accessible cars" : cat.toLowerCase()} in ${cityName} from verified local owners. ${list.length} listing${list.length === 1 ? "" : "s"} with clear daily prices, delivery to your accommodation and airport handover.` : `Search ${cat === "All listings" ? "wheelchairs, mobility scooters, e-bikes, accessible cars, strollers and rollators" : cat.toLowerCase()} to rent from local owners across Europe. Filter by city, dates, weight and delivery.`,
+      canonical: (!filtered && !days && P.staticPath(cityName, state.category)) || (!cityName && state.category && !filtered && !days ? "gear/" + P.categorySlug(state.category) + "/" : null) || ("browse.html" + ((cityName || state.category) ? "?" + new URLSearchParams(Object.assign({}, cityName ? { where: cityName } : {}, state.category ? { category: state.category } : {})).toString() : "")),
+      robots: (filtered || days) ? "noindex, follow" : "index, follow, max-image-preview:large",
+      jsonld: { "@context": "https://schema.org", "@type": "ItemList", "name": cityName ? `${cat} in ${cityName}` : cat, "numberOfItems": list.length, "itemListElement": list.slice(0, 20).map((l, i) => ({ "@type": "ListItem", "position": i + 1, "url": "https://pirents.com/listing.html?id=" + l.id, "name": l.title })) }
+    });
     $("#results-sub").textContent = `${list.length} result${list.length === 1 ? "" : "s"}` + (days ? ` · ${P.fmtDate(from)} to ${P.fmtDate(to)} (${days} day${days > 1 ? "s" : ""})` : "");
     $("#results").innerHTML = list.map(P.listingCard).join("");
     if (days) $("#results").querySelectorAll("a.stretch").forEach(a => a.href += `&from=${from}&to=${to}`);

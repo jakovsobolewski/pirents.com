@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard.html
+Disallow: /styleguide.html
+
+Sitemap: https://pirents.com/sitemap.xml

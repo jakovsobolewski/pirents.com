@@ -42,3 +42,14 @@ window.PIRENTS_REVIEWS = [
 ];
 
 window.PIRENTS_CITIES = ["Lisbon", "Barcelona", "Amsterdam", "Athens", "Split", "Rome", "Vienna"];
+
+window.PIRENTS_CITY_META = {
+  Lisbon:    { slug: "lisbon",        country: "Portugal",    airport: { name: "Lisbon Humberto Delgado Airport", iata: "LIS" } },
+  Barcelona: { slug: "barcelona",     country: "Spain",       airport: { name: "Barcelona El Prat Airport", iata: "BCN" } },
+  Amsterdam: { slug: "amsterdam",     country: "Netherlands", airport: { name: "Amsterdam Schiphol Airport", iata: "AMS" } },
+  Athens:    { slug: "athens-greece", country: "Greece",      airport: { name: "Athens International Airport", iata: "ATH" }, display: "Athens, Greece" },
+  Split:     { slug: "split",         country: "Croatia",     airport: { name: "Split Airport", iata: "SPU" } },
+  Rome:      { slug: "rome",          country: "Italy",       airport: { name: "Rome Fiumicino Airport", iata: "FCO" } },
+  Vienna:    { slug: "vienna",        country: "Austria",     airport: { name: "Vienna International Airport", iata: "VIE" } }
+};
+window.PIRENTS_CATEGORY_SLUGS = { wheelchair: "wheelchairs", scooter: "mobility-scooters", bike: "e-bikes", car: "accessible-cars", stroller: "strollers", walker: "rollators", beach: "beach-wheelchairs", other: "other-gear" };

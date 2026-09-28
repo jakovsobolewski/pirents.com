@@ -27,19 +27,20 @@ a:hover { color: var(--color-accent-800); text-decoration: underline; }
 :focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: var(--radius-sm); }
 
 h1, h2, h3, h4, p, ul, ol, figure { margin: 0; }
-h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height: 1.15; letter-spacing: .01em; text-wrap: balance; }
-h1 { font-size: var(--text-h1); font-weight: 800; line-height: 1.08; }
-h2 { font-size: var(--text-h2); line-height: 1.12; }
-h3 { font-size: var(--text-h3); line-height: 1.2; }
-h4 { font-size: var(--text-h4); line-height: 1.25; }
-.display { font-size: var(--text-display); font-weight: 800; letter-spacing: .01em; line-height: 1.02; }
+h1, h2, h3, h4 { font-weight: 800; line-height: 1.15; text-wrap: balance; }
+h1, h2, .display { font-family: var(--font-display); letter-spacing: .02em; -webkit-text-stroke: .02em currentColor; paint-order: stroke fill; }
+h1 { font-size: var(--text-h1); line-height: 1.1; }
+h2 { font-size: var(--text-h2); line-height: 1.15; }
+h3 { font-size: var(--text-h3); line-height: 1.2; letter-spacing: -0.005em; }
+h4 { font-size: var(--text-h4); line-height: 1.25; letter-spacing: 0; }
+.display { font-size: var(--text-display); font-weight: 800; letter-spacing: .02em; line-height: 1.05; }
 .font-display { font-family: var(--font-display); }
 .lead { font-size: var(--text-lg); line-height: 1.55; color: var(--color-ink-2); }
 .text-sm { font-size: var(--text-sm); }
 .text-xs { font-size: var(--text-xs); }
 .muted { color: var(--color-muted); }
 .ink-2 { color: var(--color-ink-2); }
-.eyebrow { font-family: var(--font-display); font-size: var(--text-sm); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--color-accent-500); }
+.eyebrow { font-size: var(--text-xs); font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--color-accent-500); }
 .price { font-weight: 800; font-variant-numeric: tabular-nums; }
 .price .unit { font-weight: 500; color: var(--color-muted); }
 .measure { max-width: 65ch; }

@@ -3,11 +3,26 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Listing · Pirents</title>
+<title>Rental listing | Pirents</title>
+<meta name="description" content="Rent mobility and travel gear from a verified local owner on Pirents. Clear daily price, refundable deposit and damage cover included.">
+<link rel="canonical" href="https://pirents.com/listing.html">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#F7F3EC">
+<meta property="og:site_name" content="Pirents">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Rental listing | Pirents">
+<meta property="og:description" content="Rent mobility and travel gear from a verified local owner on Pirents. Clear daily price, refundable deposit and damage cover included.">
+<meta property="og:url" content="https://pirents.com/listing.html">
+<meta property="og:image" content="https://pirents.com/assets/img/hero/scooter@2x.webp">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Rental listing | Pirents">
+<meta name="twitter:description" content="Rent mobility and travel gear from a verified local owner on Pirents. Clear daily price, refundable deposit and damage cover included.">
+<meta name="twitter:image" content="https://pirents.com/assets/img/hero/scooter@2x.webp">
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Gluten:wght@500;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/tokens.css"><link rel="stylesheet" href="assets/css/base.css"><link rel="stylesheet" href="assets/css/components.css">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/tokens.css?v=20260929c"><link rel="stylesheet" href="assets/css/base.css?v=20260929c"><link rel="stylesheet" href="assets/css/components.css?v=20260929c">
 <style>
   .crumbs { display: flex; gap: 8px; align-items: center; font-size: var(--text-sm); color: var(--color-muted); padding: var(--space-5) 0; flex-wrap: wrap; }
   .crumbs a { color: var(--color-ink-2); }
@@ -24,6 +39,12 @@
   .title-row { display: flex; justify-content: space-between; gap: var(--space-4); align-items: flex-start; }
   .title-row .btn-icon { flex: none; }
   .user-title { font-family: var(--font-sans); font-weight: 800; letter-spacing: 0; font-size: var(--text-h2); line-height: 1.15; }
+  .faq details { border-bottom: 1px solid var(--color-border); }
+  .faq details:last-child { border-bottom: 0; }
+  .faq summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); padding: var(--space-4) 0; font-weight: 800; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq details[open] summary .icon { transform: rotate(180deg); }
+  .faq details p { padding-bottom: var(--space-4); color: var(--color-ink-2); }
   .mobile-bar { display: none; position: fixed; left: 0; right: 0; bottom: 0; background: var(--color-surface); border-top: 1px solid var(--color-border); padding: 12px var(--gutter); z-index: 40; align-items: center; justify-content: space-between; gap: var(--space-4); }
   @media (max-width: 899px) { .mobile-bar { display: flex; } main { padding-bottom: 80px; } }
 </style>
@@ -34,8 +55,8 @@
   <div id="page"></div>
 </main>
 <footer id="site-footer" class="site-footer"></footer>
-<script src="assets/js/data.js"></script>
-<script src="assets/js/app.js"></script>
+<script src="assets/js/data.js?v=20260929c"></script>
+<script src="assets/js/app.js?v=20260929c"></script>
 <script>
 (function(){
   const P = window.Pirents, q = P.qs();
@@ -43,12 +64,30 @@
   const page = document.getElementById("page");
   if (!l) { page.innerHTML = `<div class="card empty" style="margin:var(--space-12) 0"><div class="mark">π</div><h2>We can't find that listing</h2><p class="muted">It may have been removed by the owner.</p><a class="btn btn-primary" href="browse.html">Browse all listings</a></div>`; return; }
   const cat = P.category(l.category);
-  document.title = `${l.title} in ${l.city} · Pirents`;
+  const cm = P.cityMeta(l.city);
+  const handover = { delivery: "Delivered to your accommodation", airport: `Airport handover at ${cm ? cm.airport.name + " (" + cm.airport.iata + ")" : "the airport"}`, pickup: "Pick up from the owner in " + (l.area || l.city), station: "Meet at a station" };
+  const hoKeys = ["delivery", "airport"].filter(k => (l.features || []).includes(k)).concat(["pickup"]);
+  const others = P.store.listings().filter(x => x.id !== l.id && x.city === l.city && x.category === l.category).slice(0, 3);
+  const fromOwner = P.store.listings().filter(x => x.id !== l.id && x.owner.name === l.owner.name).slice(0, 3);
+  P.seo({
+    title: `${l.title} for rent in ${l.city} from ${P.money(l.price)}/day | Pirents`,
+    description: `Rent ${l.title.toLowerCase()} in ${l.area ? l.area + ", " : ""}${l.city} from ${P.esc(l.owner.name.split(" ")[0])}, a verified local owner. ${P.money(l.price)} per day, ${P.money(l.deposit)} refundable deposit${(l.features || []).includes("delivery") ? ", delivery available" : ""}${(l.features || []).includes("airport") ? ", airport handover" : ""}. Damage cover included.`,
+    canonical: `listing.html?id=${encodeURIComponent(l.id)}`,
+    jsonld: [
+      { "@context": "https://schema.org", "@type": "Product", "name": l.title, "description": l.description, "category": P.category(l.category).name, "brand": { "@type": "Organization", "name": "Pirents" }, "offers": { "@type": "Offer", "priceCurrency": "EUR", "price": l.price, "unitText": "per day", "availability": "https://schema.org/InStock", "areaServed": l.city, "url": "https://pirents.com/listing.html?id=" + l.id, "seller": { "@type": "Person", "name": l.owner.name } }, ...(l.reviews ? { "aggregateRating": { "@type": "AggregateRating", "ratingValue": l.rating, "reviewCount": l.reviews } } : {}) },
+      { "@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+        { "@type": "Question", "name": `Can I have this ${cat.short.toLowerCase().replace(/s$/, "")} delivered to my hotel in ${l.city}?`, "acceptedAnswer": { "@type": "Answer", "text": (l.features || []).includes("delivery") ? `Yes. ${l.owner.name.split(" ")[0]} delivers to accommodation in ${l.city}. Add your address after booking.` : `This listing is pick-up from ${l.owner.name.split(" ")[0]} in ${l.area || l.city}. Message the owner if you need delivery.` } },
+        { "@type": "Question", "name": `Is airport handover available in ${l.city}?`, "acceptedAnswer": { "@type": "Answer", "text": (l.features || []).includes("airport") ? `Yes. ${l.owner.name.split(" ")[0]} can meet you at ${cm ? cm.airport.name + " (" + cm.airport.iata + ")" : "the airport"} arrivals.` : `Not for this listing. Filter ${l.city} listings by "Airport handover" to find owners who meet at ${cm ? cm.airport.iata : "the airport"}.` } },
+        { "@type": "Question", "name": "What is the minimum rental and the deposit?", "acceptedAnswer": { "@type": "Answer", "text": `Minimum ${l.minDays || 1} day${(l.minDays || 1) > 1 ? "s" : ""}. ${P.money(l.price)} per day plus a 10% service fee, with a refundable ${P.money(l.deposit)} deposit held from pick-up to return. Damage cover up to €3,000 is included.` } }
+      ] },
+      { "@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [ { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://pirents.com/" }, { "@type": "ListItem", "position": 2, "name": cm?.display || l.city, "item": "https://pirents.com/" + (P.staticPath(l.city) || "browse.html?where=" + encodeURIComponent(l.city)) }, { "@type": "ListItem", "position": 3, "name": P.category(l.category).name, "item": "https://pirents.com/" + (P.staticPath(l.city, l.category) || "browse.html?category=" + l.category) }, { "@type": "ListItem", "position": 4, "name": l.title } ] }
+    ]
+  });
   const instant = (l.features || []).includes("instant");
   const featIcons = { delivery: "truck", airport: "plane", electric: "zap", insurance: "shield", instant: "zap", foldable: "fold", lightweight: "weight", charger: "zap", helmet: "shield", ramp: "fold", allterrain: "sun", hand_controls: "car", child_seat: "stroller" };
   const specIcons = ["weight", "ruler", "tag", "fold"];
   page.innerHTML = `
-    <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a>${P.icon("arrowRight", "icon-sm")}<a href="browse.html?category=${cat.id}">${cat.name}</a>${P.icon("arrowRight", "icon-sm")}<a href="browse.html?where=${encodeURIComponent(l.city)}">${P.esc(l.city)}</a></nav>
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a>${P.icon("arrowRight", "icon-sm")}<a href="${P.staticPath(l.city) || "browse.html?where=" + encodeURIComponent(l.city)}">${P.esc(cm?.display || l.city)}</a>${P.icon("arrowRight", "icon-sm")}<a href="${P.staticPath(l.city, l.category) || "browse.html?category=" + cat.id}">${cat.name}</a><span aria-current="page" style="color:var(--color-ink)">${P.icon("arrowRight", "icon-sm")}${P.esc(l.title)}</span></nav>
     <div class="gallery" aria-label="Photos"><div class="tile" style="background:${cat.tile}">${P.icon(cat.icon)}</div><div class="tile" style="background:var(--color-gold-50)">${P.icon(cat.icon)}</div><div class="tile" style="background:var(--color-accent-50)">${P.icon(cat.icon)}</div></div>
     <div class="detail">
       <div class="stack-lg">
@@ -64,6 +103,14 @@
         <div class="stack"><h2 style="font-size:var(--text-h3)">What's included</h2><ul class="plain grid grid-2" style="gap:10px">${(l.features || []).map(f => `<li class="row" style="gap:10px">${P.icon(featIcons[f] || "check")}<span>${P.featureName(f)}</span></li>`).join("") || "<li class='muted'>No extras listed</li>"}</ul></div>
         ${l.rules?.length ? `<div class="stack"><h2 style="font-size:var(--text-h3)">Owner's rules</h2><ul class="plain stack-sm">${l.rules.map(r => `<li class="row" style="gap:10px;align-items:flex-start">${P.icon("check", "icon-sm")} <span>${P.esc(r)}</span></li>`).join("")}</ul></div>` : ""}
         <div class="stack" id="reviews"><h2 style="font-size:var(--text-h3)">${l.reviews ? `${l.reviews} reviews · ${l.rating.toFixed(1)} average` : "No reviews yet"}</h2>${l.reviews ? `<div class="grid grid-2">${window.PIRENTS_REVIEWS.map(r => `<article class="review card card-pad"><header><span class="avatar" aria-hidden="true">${P.initials(r.name)}</span><div><b>${P.esc(r.name)}</b><span>${r.date}</span></div></header><div class="rating" aria-label="5 out of 5">${P.icon("star").repeat(5)}</div><p class="ink-2">${P.esc(r.text)}</p></article>`).join("")}</div>` : `<p class="muted">Be the first to rent this and leave a review.</p>`}</div>
+        <div class="stack" id="handover"><h2 style="font-size:var(--text-h3)">Handover in ${P.esc(cm?.display || l.city)}</h2><ul class="plain stack-sm">${hoKeys.map(k => `<li class="row" style="gap:10px">${P.icon(k === "airport" ? "plane" : k === "delivery" ? "truck" : "pin")}<span>${handover[k]}</span></li>`).join("")}</ul><p class="text-sm muted">Exact meeting point and time are agreed with ${P.esc(l.owner.name.split(" ")[0])} after booking.</p></div>
+        <div class="stack" id="faq"><h2 style="font-size:var(--text-h3)">Good to know</h2><div class="faq card" style="padding:0 var(--space-5)">
+          <details><summary>Can I have this delivered to my hotel in ${P.esc(l.city)}?<span>${P.icon("chevronDown")}</span></summary><p>${(l.features || []).includes("delivery") ? `Yes. ${P.esc(l.owner.name.split(" ")[0])} delivers to accommodation in ${P.esc(l.city)}. Add your address after booking.` : `This listing is pick-up from ${P.esc(l.owner.name.split(" ")[0])} in ${P.esc(l.area || l.city)}. Message the owner if you need delivery.`}</p></details>
+          <details><summary>Is airport handover available?<span>${P.icon("chevronDown")}</span></summary><p>${(l.features || []).includes("airport") ? `Yes. ${P.esc(l.owner.name.split(" ")[0])} can meet you at ${cm ? P.esc(cm.airport.name) + " (" + cm.airport.iata + ")" : "the airport"} arrivals.` : `Not for this listing. <a href="${P.staticPath(l.city) ? P.staticPath(l.city) + "airport/" : "browse.html?where=" + encodeURIComponent(l.city) + "&features=airport"}">See ${P.esc(l.city)} listings with airport handover</a>.`}</p></details>
+          <details><summary>What is the minimum rental and the deposit?<span>${P.icon("chevronDown")}</span></summary><p>Minimum ${l.minDays || 1} day${(l.minDays || 1) > 1 ? "s" : ""}. ${P.money(l.price)} per day plus a 10% service fee, with a refundable ${P.money(l.deposit)} deposit held from pick-up to return. Damage cover up to €3,000 is included.</p></details>
+        </div></div>
+        ${others.length ? `<div class="stack"><div class="section-head" style="margin-bottom:0"><h2 style="font-size:var(--text-h3)">More ${cat.name.toLowerCase()} in ${P.esc(l.city)}</h2><a href="${P.staticPath(l.city, l.category) || "browse.html?where=" + encodeURIComponent(l.city) + "&category=" + l.category}">See all</a></div><div class="grid grid-3" style="gap:var(--space-4)">${others.map(P.listingCard).join("")}</div></div>` : ""}
+        ${fromOwner.length ? `<div class="stack"><h2 style="font-size:var(--text-h3)">Other gear from ${P.esc(l.owner.name.split(" ")[0])}</h2><div class="grid grid-3" style="gap:var(--space-4)">${fromOwner.map(P.listingCard).join("")}</div></div>` : ""}
         <div class="notice notice-info">${P.icon("shield")}<span><b>Damage cover included.</b> Every Pirents rental includes up to €3,000 damage cover. The refundable deposit is only held from pickup to return.</span></div>
       </div>
       <aside class="booking card card-pad stack" aria-label="Book this item">

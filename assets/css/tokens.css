@@ -1,4 +1,12 @@
 /* Pirents design tokens — source of truth is DESIGN.md. Palette taken from the pie logo. */
+@font-face {
+  font-family: "Squeaky";
+  src: url("../fonts/squeaky.ttf") format("truetype");
+  font-weight: 400;          /* single weight; 700/800 use synthetic bold to match the logo's marker strokes */
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 124%;         /* the face has a small body; scale so headings match the type scale */
+}
 :root {
   /* Brand red (wordmark, filling) */
   --color-accent-50:  #FBF1F0;
@@ -55,7 +63,7 @@
   --tile-other:      #ECE6DC;
 
   /* Type */
-  --font-display: "Gluten", "Nunito", system-ui, sans-serif;
+  --font-display: "Squeaky", "Nunito", system-ui, sans-serif;
   --font-sans: "Nunito", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --text-display: 3.5rem;
   --text-h1: 2.5rem;
