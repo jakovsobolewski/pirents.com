@@ -58,8 +58,8 @@ const head = ({ title, desc, canonical, prefix, noindex, jsonld, ogimg }) => `<!
 <meta name="robots" content="${noindex ? "noindex, follow" : "index, follow, max-image-preview:large"}">
 <meta name="pirents-base" content="${prefix}">
 <meta name="theme-color" content="#F7F3EC">
-<meta property="og:site_name" content="Pirents"><meta property="og:type" content="website"><meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(desc)}"><meta property="og:url" content="${BASE_URL}${canonical}"><meta property="og:image" content="${BASE_URL}${ogimg || "assets/img/hero/scooter@2x.webp"}"><meta property="og:locale" content="en_GB">
-<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${esc(title)}"><meta name="twitter:description" content="${esc(desc)}"><meta name="twitter:image" content="${BASE_URL}${ogimg || "assets/img/hero/scooter@2x.webp"}">
+<meta property="og:site_name" content="Pirents"><meta property="og:type" content="website"><meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(desc)}"><meta property="og:url" content="${BASE_URL}${canonical}"><meta property="og:image" content="${BASE_URL}${ogimg || "assets/img/hero/mobility-scooter@2x.webp"}"><meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${esc(title)}"><meta name="twitter:description" content="${esc(desc)}"><meta name="twitter:image" content="${BASE_URL}${ogimg || "assets/img/hero/mobility-scooter@2x.webp"}">
 <link rel="icon" href="${prefix}assets/img/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
