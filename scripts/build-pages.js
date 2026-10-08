@@ -7,7 +7,7 @@
    sitemap.xml
    Run: node scripts/build-pages.js  (no dependencies) */
 const fs = require("fs"), path = require("path"), vm = require("vm");
-const ROOT = path.join(__dirname, ".."), BASE_URL = "https://pirents.com/", V = "v=20261008c";
+const ROOT = path.join(__dirname, ".."), BASE_URL = "https://pirents.com/", V = "v=20261008d";
 
 /* --- load data.js + app.js in a tiny fake browser so we can reuse P.listingCard, P.icon, P.money --- */
 const noop = () => {};

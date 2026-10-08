@@ -110,16 +110,16 @@ a.card:hover, .card.link:hover { box-shadow: var(--shadow-md); transform: transl
 
 /* ---------- Language selector ---------- */
 .lang { position: relative; }
-.flag { width: 64px; height: 28px; border-radius: 7px; display: block; box-shadow: inset 0 0 0 1px rgba(47,42,39,.18); }
-.lang-btn { display: grid; place-items: center; height: 44px; padding: 0 6px; border-radius: var(--radius-md); transition: background var(--dur-fast); }
+.flag { width: 30px; height: 30px; border-radius: 50%; display: block; box-shadow: 0 0 0 1px rgba(47,42,39,.18); }
+.lang-btn { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border-radius: 50%; transition: background var(--dur-fast); }
 .lang-btn:hover { background: var(--color-bg); }
 .lang-btn .flag { transition: transform var(--dur-fast); }
 .lang-btn:hover .flag { transform: translateY(-1px); }
-.lang-list { position: absolute; right: 0; top: calc(100% + 6px); margin: 0; padding: 8px; list-style: none; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); display: grid; grid-template-columns: 1fr 1fr; gap: 6px; z-index: 70; min-width: 168px; }
-.lang-list button { display: grid; place-items: center; padding: 5px; border-radius: var(--radius-sm); min-height: 44px; }
+.lang-list { position: absolute; right: 0; top: calc(100% + 6px); margin: 0; padding: 8px; list-style: none; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); display: grid; grid-template-columns: repeat(4, 44px); gap: 6px; z-index: 70; }
+.lang-list button { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border-radius: 50%; }
 .lang-list button:hover { background: var(--color-bg); }
 .lang-list [aria-selected="true"] button { background: var(--color-accent-50); box-shadow: inset 0 0 0 2px var(--color-accent-500); }
-@media (max-width: 639px) { .flag { width: 56px; height: 24.5px; } .lang-list { grid-template-columns: 1fr 1fr; right: -8px; } }
+@media (max-width: 639px) { .lang-list { right: -8px; } }
 
 /* ---------- Footer ---------- */
 .site-footer { background: var(--color-ink); color: #CFC7BE; padding-block: var(--space-16) var(--space-8); margin-top: var(--space-16); }
