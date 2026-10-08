@@ -253,7 +253,7 @@
     it: '<rect width="64" height="28" fill="#CE2B37"/><rect width="42.7" height="28" fill="#fff"/><rect width="21.3" height="28" fill="#009246"/>',
     de: '<rect width="64" height="28" fill="#FFCE00"/><rect width="64" height="18.7" fill="#DD0000"/><rect width="64" height="9.3" fill="#000"/>'
   };
-  P.flag = (lang, cls = "") => `<svg class="flag ${cls}" viewBox="0 0 64 28" aria-hidden="true" focusable="false"><g>${flagArt[lang.flag]}</g><rect width="64" height="28" fill="rgba(20,16,14,.42)"/><text x="32" y="18.5" text-anchor="middle" font-family="Nunito, system-ui, sans-serif" font-weight="800" font-size="${lang.name.length > 8 ? 9.5 : 11}" fill="#fff" letter-spacing=".3">${P.esc(lang.name)}</text></svg>`;
+  P.flag = (lang, cls = "") => `<svg class="flag ${cls}" viewBox="0 0 64 28" aria-hidden="true" focusable="false"><g>${flagArt[lang.flag]}</g></svg>`;
   P.lang = () => { let c = "en"; try { c = localStorage.getItem("pirents.lang") || "en"; } catch {} return P.LANGS.find(l => l.code === c) || P.LANGS[0]; };
   P.setLang = (code) => { try { localStorage.setItem("pirents.lang", code); } catch {} document.documentElement.lang = code; };
   P.langMenu = () => {

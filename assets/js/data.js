@@ -36,9 +36,9 @@ window.PIRENTS_LISTINGS = [
 ];
 
 window.PIRENTS_REVIEWS = [
-  { name: "Hannah W.", date: "Aug 2026", text: "Exactly as described and handed over at the airport with a smile. Made the whole trip possible." },
-  { name: "Omar S.", date: "Jul 2026", text: "Quick replies, clear instructions, spotless equipment. Would rent again without hesitation." },
-  { name: "Petra K.", date: "Jun 2026", text: "Delivery to the hotel was on time. Small tip: ask for the extra cushion, it's worth it." }
+  { name: "Hannah W.", photo: "hannah", date: "Aug 2026", text: "Exactly as described and handed over at the airport with a smile. Made the whole trip possible." },
+  { name: "Omar S.", photo: "omar", date: "Jul 2026", text: "Quick replies, clear instructions, spotless equipment. Would rent again without hesitation." },
+  { name: "Petra K.", photo: "petra", date: "Jun 2026", text: "Delivery to the hotel was on time. Small tip: ask for the extra cushion, it's worth it." }
 ];
 
 window.PIRENTS_CITIES = ["Lisbon", "Barcelona", "Amsterdam", "Athens", "Split", "Rome", "Vienna"];
