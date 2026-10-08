@@ -122,7 +122,7 @@
     const fav = P.store.isFavourite(l.id);
     const name = `${l.title}, ${l.city}, ${P.money(l.price)} per day${l.reviews ? ", rated " + l.rating.toFixed(1) : ""}`;
     return `<article class="card listing-card">
-      <div class="media"><div class="tile" style="background:${cat.tile}">${P.icon(cat.icon)}</div><span class="badge badge-paper">${P.esc(cat.short)}</span></div>
+      <div class="media">${l.photo ? `<img class="tile" src="${B}${P.esc(l.photo)}" alt="" loading="lazy" decoding="async" width="640" height="480">` : `<div class="tile" style="background:${cat.tile}">${P.icon(cat.icon)}</div>`}<span class="badge badge-paper">${P.esc(cat.short)}</span></div>
       <button class="fav" type="button" aria-pressed="${fav}" aria-label="${fav ? "Remove from" : "Save to"} favourites" data-fav="${l.id}">${P.icon("heart")}</button>
       <div class="body">
         <h3 class="title">${P.esc(l.title)}</h3>
@@ -253,7 +253,9 @@
     it: '<rect width="64" height="28" fill="#CE2B37"/><rect width="42.7" height="28" fill="#fff"/><rect width="21.3" height="28" fill="#009246"/>',
     de: '<rect width="64" height="28" fill="#FFCE00"/><rect width="64" height="18.7" fill="#DD0000"/><rect width="64" height="9.3" fill="#000"/>'
   };
-  P.flag = (lang, cls = "") => `<svg class="flag ${cls}" viewBox="0 0 64 28" aria-hidden="true" focusable="false"><g>${flagArt[lang.flag]}</g></svg>`;
+  // Circular flags: crop a 28×28 square from the 64×28 artwork (Greece keeps its canton on the left).
+  const flagCropX = { gr: 0 };
+  P.flag = (lang, cls = "") => `<svg class="flag ${cls}" viewBox="${flagCropX[lang.flag] ?? 18} 0 28 28" aria-hidden="true" focusable="false"><g>${flagArt[lang.flag]}</g></svg>`;
   P.lang = () => { let c = "en"; try { c = localStorage.getItem("pirents.lang") || "en"; } catch {} return P.LANGS.find(l => l.code === c) || P.LANGS[0]; };
   P.setLang = (code) => { try { localStorage.setItem("pirents.lang", code); } catch {} document.documentElement.lang = code; };
   P.langMenu = () => {
