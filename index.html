@@ -29,7 +29,7 @@
 ]}
 </script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Can I rent a wheelchair or mobility scooter for just one day?","acceptedAnswer":{"@type":"Answer","text":"Yes. Most Pirents listings have a one-day minimum. Owners set their own minimum and it is shown on every listing before you book."}},{"@type":"Question","name":"Do owners deliver to my hotel or meet me at the airport?","acceptedAnswer":{"@type":"Answer","text":"Many do. Listings show delivery, airport handover, station meet-up or pick-up from the owner's address."}},{"@type":"Question","name":"What does the price include?","acceptedAnswer":{"@type":"Answer","text":"The daily price set by the owner plus a 10% Pirents service fee, shown before you commit. A refundable deposit is held from pick-up to return. Every rental includes up to €3,000 damage cover."}},{"@type":"Question","name":"Who am I renting from?","acceptedAnswer":{"@type":"Answer","text":"A verified local owner with a name, reviews and a typical response time. You message them directly before and during the rental."}},{"@type":"Question","name":"Which cities is Pirents live in?","acceptedAnswer":{"@type":"Answer","text":"Lisbon, Barcelona, Amsterdam, Athens (Greece), Split, Rome and Vienna, with owners joining in more cities every month."}}]}</script>
-<link rel="stylesheet" href="assets/css/tokens.css?v=20260929c"><link rel="stylesheet" href="assets/css/base.css?v=20260929c"><link rel="stylesheet" href="assets/css/components.css?v=20260929c">
+<link rel="stylesheet" href="assets/css/tokens.css?v=20261008a"><link rel="stylesheet" href="assets/css/base.css?v=20261008a"><link rel="stylesheet" href="assets/css/components.css?v=20261008a">
 <style>
   .hero { padding: var(--space-12) 0 var(--space-12); }
   .hero-inner { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-8) var(--space-12); align-items: center; }
@@ -175,8 +175,8 @@
   </section>
 </main>
 <footer id="site-footer" class="site-footer"></footer>
-<script src="assets/js/data.js?v=20260929c"></script>
-<script src="assets/js/app.js?v=20260929c"></script>
+<script src="assets/js/data.js?v=20261008a"></script>
+<script src="assets/js/app.js?v=20261008a"></script>
 <script>
 (function(){
   const P = window.Pirents;
@@ -194,7 +194,7 @@
   const cityCounts = {}; P.store.listings().forEach(l => cityCounts[l.city] = (cityCounts[l.city] || 0) + 1);
   document.getElementById("city-strip").innerHTML = window.PIRENTS_CITIES.map(c => `<a class="chip" href="rentals/${P.cityMeta(c).slug}/">${P.icon("pin")} ${P.cityMeta(c).display || c} <span class="muted">${cityCounts[c] || 0}</span></a>`).join("");
   document.getElementById("airport-strip").innerHTML = window.PIRENTS_CITIES.map(c => `<a class="chip" href="rentals/${P.cityMeta(c).slug}/airport/">${P.icon("plane")} ${P.cityMeta(c).airport.iata} · ${c}</a>`).join("");
-  document.getElementById("quotes").innerHTML = window.PIRENTS_REVIEWS.map(r => `<figure class="card quote-card"><div class="rating" aria-label="5 out of 5" style="color:var(--color-gold-600)">${P.icon("star").repeat(5)}</div><p>“${P.esc(r.text)}”</p><figcaption class="row"><span class="avatar" aria-hidden="true">${P.initials(r.name)}</span><span><b>${P.esc(r.name)}</b><br><span class="muted text-sm">${r.date}</span></span></figcaption></figure>`).join("");
+  document.getElementById("quotes").innerHTML = window.PIRENTS_REVIEWS.map(r => `<figure class="card quote-card"><div class="rating" aria-label="5 out of 5" style="color:var(--color-gold-600)">${P.icon("star").repeat(5)}</div><p>“${P.esc(r.text)}”</p><figcaption class="row"><span class="avatar" aria-hidden="true">${r.photo ? `<img src="assets/img/people/${r.photo}.webp" srcset="assets/img/people/${r.photo}@2x.webp 2x" alt="" width="40" height="40" loading="lazy">` : P.initials(r.name)}</span><span><b>${P.esc(r.name)}</b><br><span class="muted text-sm">${r.date}</span></span></figcaption></figure>`).join("");
 })();
 </script>
 </body>
