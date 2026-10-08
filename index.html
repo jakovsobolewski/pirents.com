@@ -29,7 +29,7 @@
 ]}
 </script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Can I rent a wheelchair or mobility scooter for just one day?","acceptedAnswer":{"@type":"Answer","text":"Yes. Most Pirents listings have a one-day minimum. Owners set their own minimum and it is shown on every listing before you book."}},{"@type":"Question","name":"Do owners deliver to my hotel or meet me at the airport?","acceptedAnswer":{"@type":"Answer","text":"Many do. Listings show delivery, airport handover, station meet-up or pick-up from the owner's address."}},{"@type":"Question","name":"What does the price include?","acceptedAnswer":{"@type":"Answer","text":"The daily price set by the owner plus a 10% Pirents service fee, shown before you commit. A refundable deposit is held from pick-up to return. Every rental includes up to €3,000 damage cover."}},{"@type":"Question","name":"Who am I renting from?","acceptedAnswer":{"@type":"Answer","text":"A verified local owner with a name, reviews and a typical response time. You message them directly before and during the rental."}},{"@type":"Question","name":"Which cities is Pirents live in?","acceptedAnswer":{"@type":"Answer","text":"Lisbon, Barcelona, Amsterdam, Athens (Greece), Split, Rome and Vienna, with owners joining in more cities every month."}}]}</script>
-<link rel="stylesheet" href="assets/css/tokens.css?v=20260929c"><link rel="stylesheet" href="assets/css/base.css?v=20260929c"><link rel="stylesheet" href="assets/css/components.css?v=20260929c">
+<link rel="stylesheet" href="assets/css/tokens.css?v=20260929c"><link rel="stylesheet" href="assets/css/base.css?v=20260929c"><link rel="stylesheet" href="assets/css/components.css?v=20261008b">
 <style>
   .hero { padding: var(--space-12) 0 var(--space-12); }
   .hero-inner { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-8) var(--space-12); align-items: center; }
@@ -78,7 +78,7 @@
     <div class="container hero-inner">
       <div class="hero-copy">
         <span class="eyebrow">Peer-to-peer mobility rentals</span>
-        <h1 class="display">Get around anywhere. Rent the gear from someone who lives there.</h1>
+        <h1 class="display">Get around anywhere. Rent the vehicle from someone who lives there.</h1>
         <p class="lead measure">Wheelchairs, mobility scooters, bikes, accessible cars and strollers from local owners. Delivered to your hotel, or handed over at the airport.</p>
       </div>
       <div class="hero-art">
@@ -175,8 +175,9 @@
   </section>
 </main>
 <footer id="site-footer" class="site-footer"></footer>
-<script src="assets/js/data.js?v=20260929c"></script>
-<script src="assets/js/app.js?v=20260929c"></script>
+<script src="assets/js/data.js?v=20261008a"></script>
+<script src="assets/js/app.js?v=20261008a"></script>
+<script src="assets/js/datepicker.js?v=20261007b"></script>
 <script>
 (function(){
   const P = window.Pirents;
@@ -187,8 +188,9 @@
   const from = document.getElementById("s-from"), to = document.getElementById("s-to");
   from.min = P.today(); to.min = P.today(1);
   from.addEventListener("change", () => { to.min = from.value || P.today(1); if (to.value && to.value <= from.value) to.value = ""; });
+  P.dateRange(from, to);
   const counts = {}; P.store.listings().forEach(l => counts[l.category] = (counts[l.category] || 0) + 1);
-  document.getElementById("cat-grid").innerHTML = window.PIRENTS_CATEGORIES.map(c => `<a class="cat-tile" href="gear/${P.categorySlug(c.id)}/"><span class="ico" style="background:${c.tile}">${P.icon(c.icon)}</span><span><strong>${c.name}</strong><br><small>${counts[c.id] || 0} listings</small></span></a>`).join("");
+  document.getElementById("cat-grid").innerHTML = window.PIRENTS_CATEGORIES.map(c => `<a class="cat-photo" href="gear/${P.categorySlug(c.id)}/"><img src="${c.photo}" alt="" loading="lazy" decoding="async" width="400" height="500"><span class="ico" style="background:${c.tile}">${P.icon(c.icon)}</span><span class="label"><strong>${c.name}</strong><small>${counts[c.id] || 0} listings</small></span></a>`).join("");
   const featured = P.store.listings().filter(l => l.reviews).sort((a, b) => (b.rating * Math.log(b.reviews + 1)) - (a.rating * Math.log(a.reviews + 1))).slice(0, 8);
   document.getElementById("featured").innerHTML = featured.map(P.listingCard).join("");
   const cityCounts = {}; P.store.listings().forEach(l => cityCounts[l.city] = (cityCounts[l.city] || 0) + 1);

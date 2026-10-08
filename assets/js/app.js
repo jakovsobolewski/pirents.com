@@ -122,7 +122,7 @@
     const fav = P.store.isFavourite(l.id);
     const name = `${l.title}, ${l.city}, ${P.money(l.price)} per day${l.reviews ? ", rated " + l.rating.toFixed(1) : ""}`;
     return `<article class="card listing-card">
-      <div class="media"><div class="tile" style="background:${cat.tile}">${P.icon(cat.icon)}</div><span class="badge badge-paper">${P.esc(cat.short)}</span></div>
+      <div class="media">${l.photo ? `<img class="tile" src="${B}${P.esc(l.photo)}" alt="" loading="lazy" decoding="async" width="640" height="480">` : `<div class="tile" style="background:${cat.tile}">${P.icon(cat.icon)}</div>`}<span class="badge badge-paper">${P.esc(cat.short)}</span></div>
       <button class="fav" type="button" aria-pressed="${fav}" aria-label="${fav ? "Remove from" : "Save to"} favourites" data-fav="${l.id}">${P.icon("heart")}</button>
       <div class="body">
         <h3 class="title">${P.esc(l.title)}</h3>
